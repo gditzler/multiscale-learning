@@ -1,6 +1,6 @@
 # MIT License
 # 
-# Copyright (c) 2022 Gregory Ditzler
+# Copyright (c) 2023 Gregory Ditzler
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -118,9 +118,31 @@ class DataGenFusion(tf.keras.utils.Sequence):
 class FusionDataLoader(): 
     """_summary_
     """
-    def __init__(self, image_size:int=[32,64,128], batch_size:int=128, rotation:int=40, augment:bool=False): 
-        dl_01 = DataLoader(image_size=image_size[0], store_numpy=True, rotation=rotation, augment=augment)
-        dl_02 = DataLoader(image_size=image_size[1], store_numpy=True, rotation=rotation, augment=augment)
-        dl_03 = DataLoader(image_size=image_size[2], store_numpy=True, rotation=rotation, augment=augment)
-        self.train_ds = DataGenFusion(dl_01.X_train, dl_02.X_train, dl_03.X_train, dl_03.y_train, batch_size=batch_size)
-        self.valid_ds = DataGenFusion(dl_01.X_valid, dl_02.X_valid, dl_03.X_valid, dl_03.y_valid, batch_size=batch_size)
+    def __init__(self, image_size:int=[32,64,128], batch_size:int=128, rotation:int=40, augment:bool=False):
+        self.train_ds = None 
+        self.valid_ds = None 
+        self.initialized = False 
+        self.image_size = image_size
+        self.batch_size = batch_size
+        self.rotation = rotation
+        self.augment = augment 
+    
+    def load_benign(self):              
+        dl_01 = DataLoader(
+            image_size=self.image_size[0], store_numpy=True, rotation=self.rotation, augment=self.augment
+        )
+        dl_02 = DataLoader(
+            image_size=self.image_size[1], store_numpy=True, rotation=self.rotation, augment=self.augment
+        )
+        dl_03 = DataLoader(
+            image_size=self.image_size[2], store_numpy=True, rotation=self.rotation, augment=self.augment
+        )
+        self.train_ds = DataGenFusion(
+            dl_01.X_train, dl_02.X_train, dl_03.X_train, dl_03.y_train, batch_size=self.batch_size
+        )
+        self.valid_ds = DataGenFusion(
+            dl_01.X_valid, dl_02.X_valid, dl_03.X_valid, dl_03.y_valid, batch_size=self.batch_size
+        )
+    
+    def load_adversarial(self): 
+        return NotImplementedError('Not implemented.')
