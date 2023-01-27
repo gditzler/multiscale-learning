@@ -20,31 +20,31 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import cv2
 import pickle
 import numpy as np 
-from muscle.data import DataLoader
-from muscle.models import DenseNet121
 from muscle.utils import load_train_evaluate
 
 path_adversarial_data = 'outputs/'
-path_output = 'outputs/multi_resultion_performances.pkl'
+path_output = 'outputs/multi_resolution_performances.pkl'
 params = {
     'batch_size': 128, 
     'rotation': 40, 
     'augment': False, 
-    'store_numpy': True 
+    'store_numpy': True, 
+    'learning_rate': 0.0005, 
+    'epochs': 2
 }
     
 def main():
-    performance_160 = load_train_evaluate(160)
-    performance_80 = load_train_evaluate(80)
-    performance_60 = load_train_evaluate(60)
+    performance_160 = load_train_evaluate(params, 160)
+    performance_80 = load_train_evaluate(params, 80)
+    performance_60 = load_train_evaluate(params, 60)
     
     results = {
         'performance_160': performance_160, 
         'performance_80': performance_80,
         'performance_60': performance_60,  
+        'params': params
     }
     with open(path_output, 'rb') as f:
         pickle.dump(results, f) 

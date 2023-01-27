@@ -26,9 +26,9 @@
 SEED=1234
 
 # generate adversarial data
-python generate_adversarial_data.py -o outputs/ -s ${SEED} -a FastGradientMethod
+# python generate_adversarial_data.py -o outputs/ -s ${SEED} -a FastGradientMethod
 python generate_adversarial_data.py -o outputs/ -s ${SEED} -a ProjectedGradientDescent
 python generate_adversarial_data.py -o outputs/ -s ${SEED} -a DeepFool
 
 # get the results 
-python main.py 
+# python main.py 

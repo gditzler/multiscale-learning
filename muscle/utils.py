@@ -20,11 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import cv2 
 import pickle 
 import numpy as np 
-import tensorflow as tf
-import tensorflow_datasets as tfds
+
 from .models import DenseNet121
+from .data import DataLoader
 
 epsilons = [(i+1)/100 for i in range(20)]
  
@@ -43,7 +44,7 @@ def prepare_adversarial_data(file_path, image_size):
     return Xadv, yadv
  
 
-def load_train_evaluate(image_size): 
+def load_train_evaluate(params, image_size): 
     dataloader = DataLoader(
         image_size=image_size, 
         batch_size=params['batch_size'], 
@@ -53,31 +54,31 @@ def load_train_evaluate(image_size):
     )
        
     network = DenseNet121(
-        learning_rate=0.0005, 
-        image_size=80, 
-        epochs=10
+        learning_rate=params['learning_rate'], # 0.0005, 
+        image_size=image_size, 
+        epochs=params['epochs']
     )
     network.train(dataloader)
     
     performance = {}
-    performance['Benign'] = network.network.evaluate(dataloader.X_valid, dataloader.y_valid)
+    performance['Benign'] = network.evaluate(dataloader.X_valid, dataloader.y_valid)
     
     perf = np.zeros((len(epsilons,)))
     for n, eps in enumerate(epsilons): 
-        file_path = ''.join('outputs/Adversarial_FastGradientMethod_eps', str(eps), '.pkl')
+        file_path = ''.join(['outputs/Adversarial_FastGradientMethod_eps', str(eps), '.pkl'])
         Xadv, yadv = prepare_adversarial_data(file_path=file_path, image_size=image_size)
-        perf[n] = network.network.evaluate(Xadv, yadv)
+        perf[n] = network.evaluate(Xadv, yadv)
     performance['FastGradientMethod'] = perf
    
     perf = np.zeros((len(epsilons,)))
     for n, eps in enumerate(epsilons): 
-        file_path = ''.join('outputs/Adversarial_ProjectedGradientDescent_eps', str(eps), '.pkl')
+        file_path = ''.join(['outputs/Adversarial_ProjectedGradientDescent_eps', str(eps), '.pkl'])
         Xadv, yadv = prepare_adversarial_data(file_path=file_path, image_size=image_size)
-        perf[n] = network.network.evaluate(Xadv, yadv)
-    performance['FastGradientMethod'] = perf 
+        perf[n] = network.evaluate(Xadv, yadv)
+    performance['ProjectedGradientDescent'] = perf 
     
-    file_path = ''.join('outputs/Adversarial_DeepFool.pkl')
+    file_path = 'outputs/Adversarial_DeepFool.pkl'
     Xadv, yadv = prepare_adversarial_data(file_path=file_path, image_size=image_size)
-    performance['DeepFool'] = network.network.evaluate(Xadv, yadv)
+    performance['DeepFool'] = network.evaluate(Xadv, yadv)
     return performance
 
