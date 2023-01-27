@@ -1,4 +1,4 @@
 # files to ignore  
 *.pyc 
 models/*.h5
-
+outputs/Adversarial*.pkl
