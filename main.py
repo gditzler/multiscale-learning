@@ -21,7 +21,6 @@
 # SOFTWARE.
 
 import pickle
-import numpy as np 
 from muscle.utils import load_train_evaluate
 
 path_adversarial_data = 'outputs/'
@@ -32,7 +31,7 @@ params = {
     'augment': False, 
     'store_numpy': True, 
     'learning_rate': 0.0005, 
-    'epochs': 2
+    'epochs': 10
 }
     
 def main():
