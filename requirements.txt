@@ -1,0 +1,4 @@
+adversarial-robustness-toolbox 
+numpy
+tensorflow
+tensorflow-datasets

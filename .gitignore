@@ -1,0 +1,4 @@
+# files to ignore  
+*.pyc 
+models/*.h5
+
