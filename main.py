@@ -24,29 +24,32 @@ import pickle
 from muscle.utils import load_train_evaluate
 
 path_adversarial_data = 'outputs/'
-path_output = 'outputs/multi_resolution_performances.pkl'
+path_output = 'outputs/multi_resolution_performances_seed_'
 params = {
     'batch_size': 128, 
     'rotation': 40, 
     'augment': False, 
     'store_numpy': True, 
     'learning_rate': 0.0005, 
-    'epochs': 10
+    'epochs': 10, 
+    'seed': 1234
 }
     
 def main():
-    performance_160 = load_train_evaluate(params, 160)
-    performance_80 = load_train_evaluate(params, 80)
-    performance_60 = load_train_evaluate(params, 60)
+    #performance_160 = load_train_evaluate(params, 160)
+    #performance_80 = load_train_evaluate(params, 80)
+    #performance_60 = load_train_evaluate(params, 60)
+    performance_msr = load_train_evaluate(params, [60, 80, 160])
     
-    results = {
-        'performance_160': performance_160, 
-        'performance_80': performance_80,
-        'performance_60': performance_60,  
-        'params': params
-    }
-    with open(path_output, 'rb') as f:
-        pickle.dump(results, f) 
+    #results = {
+    #    'performance_160': performance_160, 
+    #    'performance_80': performance_80,
+    #    'performance_60': performance_60,  
+    #    'performance_msr': performance_msr, 
+    #    'params': params
+    #}
+    #with open(''.join([path_output, str(params['seed']), '.pkl']), 'rb') as f:
+    #    pickle.dump(results, f) 
         
 
 if __name__ == '__main__': 

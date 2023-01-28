@@ -205,4 +205,12 @@ class MultiResolutionNetwork:
             epochs=self.epochs,
             verbose=1
         )
-        self.histories.append(history)  
+        self.histories.append(history) 
+        
+    def predict(self, dataset): 
+        return self.network.predict(dataset)
+    
+    def evaluate(self, dataset): 
+        yhat = np.argmax(self.network.predict(dataset), axis=1) 
+        return (dataset.valid_adv_labels==yhat).sum()/len(yhat)
+      

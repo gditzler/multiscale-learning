@@ -23,6 +23,7 @@
 import numpy as np 
 import tensorflow as tf
 import tensorflow_datasets as tfds
+from .utils import prepare_adversarial_data
 
 class DataLoader(): 
     """_summary_
@@ -118,9 +119,10 @@ class DataGenFusion(tf.keras.utils.Sequence):
 class FusionDataLoader(): 
     """_summary_
     """
-    def __init__(self, image_size:int=[32,64,128], batch_size:int=128, rotation:int=40, augment:bool=False):
+    def __init__(self, image_size:int=[60,80,160], batch_size:int=128, rotation:int=40, augment:bool=False):
         self.train_ds = None 
         self.valid_ds = None 
+        self.valid_ds_adv = None 
         self.initialized = False 
         self.image_size = image_size
         self.batch_size = batch_size
@@ -144,5 +146,29 @@ class FusionDataLoader():
             dl_01.X_valid, dl_02.X_valid, dl_03.X_valid, dl_03.y_valid, batch_size=self.batch_size
         )
     
-    def load_adversarial(self): 
-        return NotImplementedError('Not implemented.')
+    def load_adversarial(self, file_path:str, load_benign:bool=True):
+
+        Xadv_160, yadv_160 = prepare_adversarial_data(file_path=file_path, image_size=160)
+        Xadv_80, yadv_80 = prepare_adversarial_data(file_path=file_path, image_size=80)
+        Xadv_60, yadv_60 = prepare_adversarial_data(file_path=file_path, image_size=60)
+        
+        if load_benign: 
+            dl_01 = DataLoader(
+                image_size=160, store_numpy=True, rotation=self.rotation, augment=self.augment
+            )
+            dl_02 = DataLoader(
+                image_size=80, store_numpy=True, rotation=self.rotation, augment=self.augment
+            )
+            dl_03 = DataLoader(
+                image_size=60, store_numpy=True, rotation=self.rotation, augment=self.augment
+            )
+        
+        self.valid_ds = DataGenFusion(
+            dl_01.X_valid, dl_02.X_valid, dl_03.X_valid, dl_03.y_valid, batch_size=self.batch_size
+        )
+        # check that the labels line up 
+        # TO DO 
+        self.valid_ds_adv = DataGenFusion(
+            Xadv_60, Xadv_80, Xadv_160, yadv_160, batch_size=self.batch_size
+        )
+        self.valid_adv_labels = yadv_160
