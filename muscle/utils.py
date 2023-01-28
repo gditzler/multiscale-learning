@@ -25,25 +25,10 @@ import pickle
 import numpy as np 
 
 from .models import DenseNet121, MultiResolutionNetwork
-from .data import DataLoader, FusionDataLoader
+from .data import DataLoader, FusionDataLoader, prepare_adversarial_data
 
 epsilons = [(i+1)/100 for i in range(20)]
  
-def prepare_adversarial_data(file_path, image_size): 
-    data_dict = pickle.load(open(file_path, 'rb'))
-    
-    # resize the images to accomodate for the model's expected shape. 
-    if data_dict['X_adv'].shape[1] != image_size:
-        Xadv = np.zeros((data_dict['Xadv'].shape[0], image_size, image_size, 3))
-        for i in range(len(Xadv)): 
-            Xadv[i] = cv2.resize(data_dict['Xadv'], (image_size, image_size))
-        yadv = data_dict['y']
-    else: 
-        Xadv, yadv = data_dict['X_adv'], data_dict['y']  
-    
-    return Xadv, yadv
- 
-
 def load_train_evaluate(params, image_size): 
     
     if len(image_size) == 1: 
@@ -62,25 +47,29 @@ def load_train_evaluate(params, image_size):
         )
     elif len(image_size) == 3: 
         dataloader = FusionDataLoader(
-            image_size=[60, 80, 160], 
-            batch_size=128, 
-            rotation=40, 
+            image_size=image_size, 
+            batch_size=params['batch_size'], 
+            rotation=params['rotation'], 
             augment=False
         )
         dataloader.load_benign()
         network = MultiResolutionNetwork(
-            image_sizes=[60, 80, 160], 
-            learning_rate=0.0005, 
-            epochs=10
+            image_sizes=image_size, 
+            learning_rate=params['learning_rate'], 
+            epochs=params['epochs']
         )
     else: 
         raise(ValueError('image_size needs to be len() 3 ro 1.'))
     
     network.train(dataloader)
+    print("Mode it!!!")
     
     performance = {}
-    performance['Benign'] = network.evaluate(dataloader.X_valid, dataloader.y_valid)
-    
+    if len(image_size) == 1: 
+        performance['Benign'] = network.evaluate(dataloader.X_valid, dataloader.y_valid)
+    else:  
+        performance['Benign'] = network.evaluate(dataloader.valid_ds, dataloader.valid_labels)
+        
     perf = np.zeros((len(epsilons,)))
     for n, eps in enumerate(epsilons):
         file_path = ''.join(['outputs/Adversarial_FastGradientMethod_eps', str(eps), '.pkl'])
@@ -89,12 +78,13 @@ def load_train_evaluate(params, image_size):
             perf[n] = network.evaluate(Xadv, yadv)
         else: 
             dataloader = FusionDataLoader(
-                image_size=[60, 80, 160], 
+                image_size=image_size, 
                 batch_size=128, 
                 rotation=40, 
                 augment=False
             )
             dataloader.load_adversarial(file_path=file_path, load_benign=False)
+            perf[n] = network.evaluate(dataloader.valid_ds, dataloader.valid_labels)
     performance['FastGradientMethod'] = perf
    
     perf = np.zeros((len(epsilons,)))
@@ -105,12 +95,13 @@ def load_train_evaluate(params, image_size):
             perf[n] = network.evaluate(Xadv, yadv)
         else: 
             dataloader = FusionDataLoader(
-                image_size=[60, 80, 160], 
-                batch_size=128, 
-                rotation=40, 
+                image_size=image_size, 
+                batch_size=params['batch_size'], 
+                rotation=params['rotation'], 
                 augment=False
             )
             dataloader.load_adversarial(file_path=file_path, load_benign=False)
+            perf[n] = network.evaluate(dataloader.valid_ds, dataloader.valid_labels)
     performance['ProjectedGradientDescent'] = perf 
     
     file_path = 'outputs/Adversarial_DeepFool.pkl'

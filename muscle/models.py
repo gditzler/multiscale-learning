@@ -191,11 +191,13 @@ class MultiResolutionNetwork:
         self.network = tf.keras.models.Model(
             inputs=[model_01.input, model_02.input, model_03.input], 
             outputs=predictions
-        ) 
+        )
+        run_opts = tf.compat.v1.RunOptions(report_tensor_allocations_upon_oom=True)
+ 
         self.network.compile(
             optimizer=tf.keras.optimizers.SGD(learning_rate=self.learning_rate), 
             loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False), 
-            metrics=['accuracy']
+            metrics=['accuracy'], 
         )
         
     def train(self, dataset): 
@@ -210,7 +212,7 @@ class MultiResolutionNetwork:
     def predict(self, dataset): 
         return self.network.predict(dataset)
     
-    def evaluate(self, dataset): 
+    def evaluate(self, dataset, labels): 
         yhat = np.argmax(self.network.predict(dataset), axis=1) 
-        return (dataset.valid_adv_labels==yhat).sum()/len(yhat)
+        return (labels==yhat).sum()/len(yhat)
       

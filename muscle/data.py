@@ -20,10 +20,28 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import cv2
+import pickle
 import numpy as np 
 import tensorflow as tf
 import tensorflow_datasets as tfds
-from .utils import prepare_adversarial_data
+# from .utils import prepare_adversarial_data
+
+
+def prepare_adversarial_data(file_path, image_size): 
+    data_dict = pickle.load(open(file_path, 'rb'))
+    
+    # resize the images to accomodate for the model's expected shape. 
+    if data_dict['X_adv'].shape[1] != image_size:
+        Xadv = np.zeros((data_dict['Xadv'].shape[0], image_size, image_size, 3))
+        for i in range(len(Xadv)): 
+            Xadv[i] = cv2.resize(data_dict['Xadv'], (image_size, image_size))
+        yadv = data_dict['y']
+    else: 
+        Xadv, yadv = data_dict['X_adv'], data_dict['y']  
+    
+    return Xadv, yadv
+ 
 
 class DataLoader(): 
     """_summary_
@@ -145,30 +163,20 @@ class FusionDataLoader():
         self.valid_ds = DataGenFusion(
             dl_01.X_valid, dl_02.X_valid, dl_03.X_valid, dl_03.y_valid, batch_size=self.batch_size
         )
+        self.valid_labels = dl_03.y_valid
+        print(dl_01.y_valid.shape)
+        print(dl_02.y_valid.shape)
+        print(dl_03.y_valid.shape)
     
-    def load_adversarial(self, file_path:str, load_benign:bool=True):
+    def load_adversarial(self, file_path:str):
 
         Xadv_160, yadv_160 = prepare_adversarial_data(file_path=file_path, image_size=160)
         Xadv_80, yadv_80 = prepare_adversarial_data(file_path=file_path, image_size=80)
         Xadv_60, yadv_60 = prepare_adversarial_data(file_path=file_path, image_size=60)
         
-        if load_benign: 
-            dl_01 = DataLoader(
-                image_size=160, store_numpy=True, rotation=self.rotation, augment=self.augment
-            )
-            dl_02 = DataLoader(
-                image_size=80, store_numpy=True, rotation=self.rotation, augment=self.augment
-            )
-            dl_03 = DataLoader(
-                image_size=60, store_numpy=True, rotation=self.rotation, augment=self.augment
-            )
-        
-        self.valid_ds = DataGenFusion(
-            dl_01.X_valid, dl_02.X_valid, dl_03.X_valid, dl_03.y_valid, batch_size=self.batch_size
-        )
         # check that the labels line up 
         # TO DO 
-        self.valid_ds_adv = DataGenFusion(
+        self.valid_ds = DataGenFusion(
             Xadv_60, Xadv_80, Xadv_160, yadv_160, batch_size=self.batch_size
         )
-        self.valid_adv_labels = yadv_160
+        self.valid_labels = yadv_160
