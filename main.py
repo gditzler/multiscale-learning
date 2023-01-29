@@ -37,7 +37,9 @@ params = {
     
 def main():
     performance_160 = load_train_evaluate(params, 160)
+    params['epochs'] = 35
     performance_80 = load_train_evaluate(params, 80)
+    params['epochs'] = 75
     performance_60 = load_train_evaluate(params, 60)
     
     results = {
@@ -46,7 +48,7 @@ def main():
         'performance_60': performance_60,  
         'params': params
     }
-    with open(''.join([path_output, str(params['seed']), '.pkl']), 'rb') as f:
+    with open(''.join([path_output, str(params['seed']), '.pkl']), 'wb') as f:
         pickle.dump(results, f) 
         
 
