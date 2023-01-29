@@ -31,7 +31,7 @@ def load_train_evaluate(params, image_size):
     performance = {}
     indices = ['FastGradientMethod', 'ProjectedGradientDescent']
     
-    if len(image_size) == 1: 
+    if type(image_size) is int: 
         dataloader = DataLoader(
             image_size=image_size, 
             batch_size=params['batch_size'], 
@@ -64,7 +64,7 @@ def load_train_evaluate(params, image_size):
     network.train(dataloader)
     
     # evaluate the benign performance of the model  
-    if len(image_size) == 1: 
+    if type(image_size) is int: 
         performance['Benign'] = network.evaluate(dataloader.X_valid, dataloader.y_valid)
     else:  
         performance['Benign'] = network.evaluate(dataloader.valid_ds, dataloader.valid_labels)
@@ -74,7 +74,7 @@ def load_train_evaluate(params, image_size):
         perf = np.zeros((len(epsilons,)))
         for n, eps in enumerate(epsilons):
             file_path = ''.join(['outputs/Adversarial_', index, '_eps', str(eps), '.pkl'])
-            if len(image_size) == 1:  
+            if type(image_size) is int:  
                 Xadv, yadv = prepare_adversarial_data(file_path=file_path, image_size=image_size)
                 perf[n] = network.evaluate(Xadv, yadv)
             else: 
