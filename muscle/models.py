@@ -192,7 +192,6 @@ class MultiResolutionNetwork:
             inputs=[model_01.input, model_02.input, model_03.input], 
             outputs=predictions
         )
-        run_opts = tf.compat.v1.RunOptions(report_tensor_allocations_upon_oom=True)
  
         self.network.compile(
             optimizer=tf.keras.optimizers.SGD(learning_rate=self.learning_rate), 

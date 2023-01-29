@@ -30,6 +30,8 @@ from .data import DataLoader, FusionDataLoader, prepare_adversarial_data
 epsilons = [(i+1)/100 for i in range(20)]
  
 def load_train_evaluate(params, image_size): 
+    performance = {}
+    indices = ['FastGradientMethod', 'ProjectedGradientDescent']
     
     if len(image_size) == 1: 
         dataloader = DataLoader(
@@ -62,48 +64,30 @@ def load_train_evaluate(params, image_size):
         raise(ValueError('image_size needs to be len() 3 ro 1.'))
     
     network.train(dataloader)
-    print("Mode it!!!")
     
-    performance = {}
     if len(image_size) == 1: 
         performance['Benign'] = network.evaluate(dataloader.X_valid, dataloader.y_valid)
     else:  
         performance['Benign'] = network.evaluate(dataloader.valid_ds, dataloader.valid_labels)
-        
-    perf = np.zeros((len(epsilons,)))
-    for n, eps in enumerate(epsilons):
-        file_path = ''.join(['outputs/Adversarial_FastGradientMethod_eps', str(eps), '.pkl'])
-        if len(image_size) == 1:  
-            Xadv, yadv = prepare_adversarial_data(file_path=file_path, image_size=image_size)
-            perf[n] = network.evaluate(Xadv, yadv)
-        else: 
-            dataloader = FusionDataLoader(
-                image_size=image_size, 
-                batch_size=128, 
-                rotation=40, 
-                augment=False
-            )
-            dataloader.load_adversarial(file_path=file_path, load_benign=False)
-            perf[n] = network.evaluate(dataloader.valid_ds, dataloader.valid_labels)
-    performance['FastGradientMethod'] = perf
-   
-    perf = np.zeros((len(epsilons,)))
-    for n, eps in enumerate(epsilons):
-        file_path = ''.join(['outputs/Adversarial_ProjectedGradientDescent_eps', str(eps), '.pkl'])
-        if len(image_size) == 1:  
-            Xadv, yadv = prepare_adversarial_data(file_path=file_path, image_size=image_size)
-            perf[n] = network.evaluate(Xadv, yadv)
-        else: 
-            dataloader = FusionDataLoader(
-                image_size=image_size, 
-                batch_size=params['batch_size'], 
-                rotation=params['rotation'], 
-                augment=False
-            )
-            dataloader.load_adversarial(file_path=file_path, load_benign=False)
-            perf[n] = network.evaluate(dataloader.valid_ds, dataloader.valid_labels)
-    performance['ProjectedGradientDescent'] = perf 
     
+    for index in indices:     
+        perf = np.zeros((len(epsilons,)))
+        for n, eps in enumerate(epsilons):
+            file_path = ''.join(['outputs/Adversarial_', index, '_eps', str(eps), '.pkl'])
+            if len(image_size) == 1:  
+                Xadv, yadv = prepare_adversarial_data(file_path=file_path, image_size=image_size)
+                perf[n] = network.evaluate(Xadv, yadv)
+            else: 
+                dataloader = FusionDataLoader(
+                    image_size=image_size, 
+                    batch_size=params['batch_size'], 
+                    rotation=params['rotation'], 
+                    augment=False
+                )
+                dataloader.load_adversarial(file_path=file_path)
+                perf[n] = network.evaluate(dataloader.valid_ds, dataloader.valid_labels)
+        performance[index] = perf
+   
     file_path = 'outputs/Adversarial_DeepFool.pkl'
     if len(image_size) == 1:  
         Xadv, yadv = prepare_adversarial_data(file_path=file_path, image_size=image_size)
