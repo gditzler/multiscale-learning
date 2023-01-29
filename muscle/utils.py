@@ -20,8 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import cv2 
-import pickle 
 import numpy as np 
 
 from .models import DenseNet121, MultiResolutionNetwork
@@ -43,7 +41,7 @@ def load_train_evaluate(params, image_size):
         )
        
         network = DenseNet121(
-            learning_rate=params['learning_rate'], # 0.0005, 
+            learning_rate=params['learning_rate'],
             image_size=image_size, 
             epochs=params['epochs']
         )
@@ -65,11 +63,13 @@ def load_train_evaluate(params, image_size):
     
     network.train(dataloader)
     
+    # evaluate the benign performance of the model  
     if len(image_size) == 1: 
         performance['Benign'] = network.evaluate(dataloader.X_valid, dataloader.y_valid)
     else:  
         performance['Benign'] = network.evaluate(dataloader.valid_ds, dataloader.valid_labels)
     
+    # evaluate the methods that have an epsilon parameter in the attack. 
     for index in indices:     
         perf = np.zeros((len(epsilons,)))
         for n, eps in enumerate(epsilons):
@@ -87,7 +87,8 @@ def load_train_evaluate(params, image_size):
                 dataloader.load_adversarial(file_path=file_path)
                 perf[n] = network.evaluate(dataloader.valid_ds, dataloader.valid_labels)
         performance[index] = perf
-   
+    
+    # evaluate deepfool 
     file_path = 'outputs/Adversarial_DeepFool.pkl'
     if len(image_size) == 1:  
         Xadv, yadv = prepare_adversarial_data(file_path=file_path, image_size=image_size)
