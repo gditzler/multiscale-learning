@@ -25,7 +25,6 @@ import pickle
 import numpy as np 
 import tensorflow as tf
 import tensorflow_datasets as tfds
-# from .utils import prepare_adversarial_data
 
 
 def prepare_adversarial_data(file_path, image_size): 
@@ -35,7 +34,7 @@ def prepare_adversarial_data(file_path, image_size):
     if data_dict['X_adv'].shape[1] != image_size:
         Xadv = np.zeros((data_dict['X_adv'].shape[0], image_size, image_size, 3))
         for i in range(len(Xadv)): 
-            Xadv[i] = cv2.resize(data_dict['X_adv'], (image_size, image_size))
+            Xadv[i] = cv2.resize(data_dict['X_adv'][i], (image_size, image_size))
         yadv = data_dict['y']
     else: 
         Xadv, yadv = data_dict['X_adv'], data_dict['y']  
