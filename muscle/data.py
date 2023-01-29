@@ -33,9 +33,9 @@ def prepare_adversarial_data(file_path, image_size):
     
     # resize the images to accomodate for the model's expected shape. 
     if data_dict['X_adv'].shape[1] != image_size:
-        Xadv = np.zeros((data_dict['Xadv'].shape[0], image_size, image_size, 3))
+        Xadv = np.zeros((data_dict['X_adv'].shape[0], image_size, image_size, 3))
         for i in range(len(Xadv)): 
-            Xadv[i] = cv2.resize(data_dict['Xadv'], (image_size, image_size))
+            Xadv[i] = cv2.resize(data_dict['X_adv'], (image_size, image_size))
         yadv = data_dict['y']
     else: 
         Xadv, yadv = data_dict['X_adv'], data_dict['y']  
