@@ -90,7 +90,7 @@ def load_train_evaluate(params, image_size):
     
     # evaluate deepfool 
     file_path = 'outputs/Adversarial_DeepFool.pkl'
-    if len(image_size) == 1:  
+    if type(image_size) is int:  
         Xadv, yadv = prepare_adversarial_data(file_path=file_path, image_size=image_size)
         performance['DeepFool'] = network.evaluate(Xadv, yadv)
     return performance
