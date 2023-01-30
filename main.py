@@ -30,7 +30,7 @@ params = {
     'augment': False, 
     'store_numpy': True, 
     'learning_rate': 0.0005, 
-    'epochs': 10, 
+    'epochs': 10,
     'seed': 1234
 }
     

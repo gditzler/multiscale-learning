@@ -59,7 +59,7 @@ def load_train_evaluate(params, image_size):
             epochs=params['epochs']
         )
     else: 
-        raise(ValueError('image_size needs to be len() 3 ro 1.'))
+        raise(ValueError('image_size needs to be len() 3 or 1.'))
     
     network.train(dataloader)
     
