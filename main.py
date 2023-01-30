@@ -23,7 +23,6 @@
 import pickle
 from muscle.utils import load_train_evaluate
 
-path_adversarial_data = 'outputs/'
 path_output = 'outputs/single_resolution_performances_seed_'
 params = {
     'batch_size': 128, 
