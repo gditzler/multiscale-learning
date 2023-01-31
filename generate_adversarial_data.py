@@ -52,6 +52,12 @@ parser.add_argument(
 
 args = parser.parse_args() 
 epsilons = [(i+1)/100 for i in range(20)]
+single_attacks = [
+    'DeepFool', 
+    'CarliniWagnerL0', 
+    'CarliniWagnerL2', 
+    'CarliniWagnerLinf' 
+]
 
 if __name__ == '__main__': 
     tf.random.set_seed(args.seed)
@@ -87,11 +93,12 @@ if __name__ == '__main__':
                 }, 
                 open(''.join([args.output, '/Adversarial_', args.attack, '_eps', str(eps), '.pkl']), 'wb')
             )
-    elif args.attack == 'DeepFool':
+    elif args.attack == single_attacks :
         attack = Attacker(
             attack_type=args.attack, 
             clip_values=(0,1)
-        ) 
+        )
+        # y is only used for deepfool 
         X = attack.attack(network.network, dataset.X_valid, dataset.y_valid)
         pickle.dump(
             {

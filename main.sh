@@ -23,7 +23,7 @@
 # SOFTWARE.
 
 SEED=1234
-ATTACKS=(FastGradientMethod ProjectedGradientDescent DeepFool)
+ATTACKS=(CarliniWagnerL0 CarliniWagnerL2 CarliniWagnerLinf FastGradientMethod ProjectedGradientDescent DeepFool)
 
 # generate adversarial data
 for attack in ${ATTACKS[*]}; do 

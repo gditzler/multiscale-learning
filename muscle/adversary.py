@@ -20,10 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import numpy as np 
 import tensorflow as tf 
 
 from art.estimators.classification import TensorFlowV2Classifier
 from art.attacks.evasion import FastGradientMethod, DeepFool, ProjectedGradientDescent
+from art.attacks.evasion import CarliniLInfMethod, CarliniL2Method, CarliniL0Method
 
 class Attacker: 
     def __init__(self, attack_type:str='FastGradientMethod', epsilon:float=0.1, clip_values:tuple=(0, 1), image_shape:tuple=(160,160,3), nb_classes:int=10, max_iter:int=10): 
@@ -53,6 +55,15 @@ class Attacker:
         elif self.attack_type == 'ProjectedGradientDescent': 
             adv_crafter = ProjectedGradientDescent(classifier, eps=self.epsilon, max_iter=self.max_iter)
             Xadv = adv_crafter.generate(x=X, y=y)
+        elif self.attack == 'CarliniWagnerL0': 
+            adv_crafter = CarliniL0Method(classifier, max_iter=self.max_iter, targeted=False)
+            Xadv = adv_crafter.generate(x=X)
+        elif self.attack == 'CarliniWagnerL2': 
+            adv_crafter = CarliniL2Method(classifier, max_iter=self.max_iter, targeted=False)
+            Xadv = adv_crafter.generate(x=X)
+        elif self.attack == 'CarliniWagnerLinf': 
+            adv_crafter = CarliniLInfMethod(classifier, max_iter=self.max_iter, targeted=False)
+            Xadv = adv_crafter.generate(x=X)
         else: 
             ValueError('Unknown attack type')
         
