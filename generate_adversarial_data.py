@@ -93,7 +93,7 @@ if __name__ == '__main__':
                 }, 
                 open(''.join([args.output, '/Adversarial_', args.attack, '_eps', str(eps), '.pkl']), 'wb')
             )
-    elif args.attack == single_attacks :
+    elif args.attack in single_attacks:
         attack = Attacker(
             attack_type=args.attack, 
             clip_values=(0,1)

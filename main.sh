@@ -26,7 +26,10 @@ SEED=1234
 ATTACKS=(CarliniWagnerL0 CarliniWagnerL2 CarliniWagnerLinf FastGradientMethod ProjectedGradientDescent DeepFool)
 
 # generate adversarial data
-for attack in ${ATTACKS[*]}; do 
+for attack in ${ATTACKS[*]}; do
+    echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+    echo "Generate data for the ${attack} attack."
+    echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
     python generate_adversarial_data.py -o outputs/ -s ${SEED} -a ${attack}
 done 
 

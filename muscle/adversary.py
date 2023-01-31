@@ -45,7 +45,7 @@ class Attacker:
             input_shape=self.image_shape,
             clip_values=self.clip_values,
         )
-        
+                
         if self.attack_type == 'FastGradientMethod': 
             adv_crafter = FastGradientMethod(classifier, eps=self.epsilon)
             Xadv = adv_crafter.generate(x=X)
@@ -55,13 +55,13 @@ class Attacker:
         elif self.attack_type == 'ProjectedGradientDescent': 
             adv_crafter = ProjectedGradientDescent(classifier, eps=self.epsilon, max_iter=self.max_iter)
             Xadv = adv_crafter.generate(x=X, y=y)
-        elif self.attack == 'CarliniWagnerL0': 
+        elif self.attack_type == 'CarliniWagnerL0': 
             adv_crafter = CarliniL0Method(classifier, max_iter=self.max_iter, targeted=False)
             Xadv = adv_crafter.generate(x=X)
-        elif self.attack == 'CarliniWagnerL2': 
+        elif self.attack_type == 'CarliniWagnerL2': 
             adv_crafter = CarliniL2Method(classifier, max_iter=self.max_iter, targeted=False)
             Xadv = adv_crafter.generate(x=X)
-        elif self.attack == 'CarliniWagnerLinf': 
+        elif self.attack_type == 'CarliniWagnerLinf': 
             adv_crafter = CarliniLInfMethod(classifier, max_iter=self.max_iter, targeted=False)
             Xadv = adv_crafter.generate(x=X)
         else: 
