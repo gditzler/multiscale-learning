@@ -47,7 +47,7 @@ parser.add_argument(
     '-a', '--attack', 
     type=str, 
     default='FastGradientMethod', 
-    help='Attack [FastGradientMethod]'
+    help='Attack [FastGradientMethod, ProjectedGradientDescent, DeepFool, CarliniWagnerL0]'
 )
 
 args = parser.parse_args() 
