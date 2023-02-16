@@ -2,3 +2,7 @@
 *.pyc 
 models/*.h5
 outputs/Adversarial*.pkl
+.DS_Store
+
+# folders to ignore 
+~
