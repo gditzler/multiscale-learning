@@ -35,6 +35,7 @@ params = {
 }
     
 def main():
+    performance_full = load_train_evaluate(params, [60, 80, 160])
     performance_160 = load_train_evaluate(params, 160)
     params['epochs'] = 35
     performance_80 = load_train_evaluate(params, 80)
@@ -42,6 +43,7 @@ def main():
     performance_60 = load_train_evaluate(params, 60)
     
     results = {
+        'performance_full': performance_full, 
         'performance_160': performance_160, 
         'performance_80': performance_80,
         'performance_60': performance_60,  

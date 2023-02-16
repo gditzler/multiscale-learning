@@ -212,6 +212,7 @@ class MultiResolutionNetwork:
         return self.network.predict(dataset)
     
     def evaluate(self, dataset, labels): 
-        yhat = np.argmax(self.network.predict(dataset), axis=1) 
+        data = (dataset.X1, dataset.X2, dataset.X3)
+        yhat = np.argmax(self.network.predict(data), axis=1) 
         return (labels==yhat).sum()/len(yhat)
       
