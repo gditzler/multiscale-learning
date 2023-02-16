@@ -93,6 +93,15 @@ def load_train_evaluate(params, image_size):
     if type(image_size) is int:  
         Xadv, yadv = prepare_adversarial_data(file_path=file_path, image_size=image_size)
         performance['DeepFool'] = network.evaluate(Xadv, yadv)
+    else: 
+        dataloader = FusionDataLoader(
+            image_size=image_size, 
+            batch_size=params['batch_size'], 
+            rotation=params['rotation'], 
+            augment=False
+        )
+        dataloader.load_adversarial(file_path=file_path)
+        performance['DeepFool'] = network.evaluate(dataloader.valid_ds, dataloader.valid_labels)
     return performance
 
 
