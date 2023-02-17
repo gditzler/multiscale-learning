@@ -32,7 +32,7 @@ params = {
     'store_numpy': True, 
     'learning_rate': 0.0005, 
     'epochs': 20,
-    'seed': 1234
+    'seed': 4321 
 }
     
 def main():
