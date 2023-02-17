@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import tensorflow as tf 
 import pickle
 from muscle.utils import load_train_evaluate
 
@@ -30,7 +31,7 @@ params = {
     'augment': False, 
     'store_numpy': True, 
     'learning_rate': 0.0005, 
-    'epochs': 10,
+    'epochs': 20,
     'seed': 1234
 }
     
@@ -54,4 +55,5 @@ def main():
         
 
 if __name__ == '__main__': 
+    tf.random.set_seed(params['seed'])
     main()

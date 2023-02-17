@@ -163,9 +163,6 @@ class FusionDataLoader():
             dl_01.X_valid, dl_02.X_valid, dl_03.X_valid, dl_03.y_valid, batch_size=self.batch_size
         )
         self.valid_labels = dl_03.y_valid
-        print(dl_01.y_valid.shape)
-        print(dl_02.y_valid.shape)
-        print(dl_03.y_valid.shape)
     
     def load_adversarial(self, file_path:str):
 
