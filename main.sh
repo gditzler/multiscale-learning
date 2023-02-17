@@ -30,8 +30,8 @@ for attack in ${ATTACKS[*]}; do
     echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
     echo "Generate data for the ${attack} attack."
     echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-    python generate_adversarial_data.py -o outputs/ -s ${SEED} -a ${attack}
+    python generate_adversarial_data.py -o outputs/ -s ${SEED} -a ${attack} 
 done 
 
 # get the results 
-python main.py 
+# python main.py 
