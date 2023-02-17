@@ -29,7 +29,12 @@ epsilons = [(i+1)/100 for i in range(20)]
  
 def load_train_evaluate(params, image_size): 
     performance = {}
-    indices = ['FastGradientMethod', 'ProjectedGradientDescent']
+    indices = [
+        'FastGradientMethod', 
+        'ProjectedGradientDescent', 
+        'AutoAttack', 
+        'BasicIterativeMethod'
+    ]
     
     if type(image_size) is int: 
         dataloader = DataLoader(

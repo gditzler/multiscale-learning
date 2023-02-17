@@ -56,7 +56,13 @@ single_attacks = [
     'DeepFool', 
     'CarliniWagnerL0', 
     'CarliniWagnerL2', 
-    'CarliniWagnerLinf' 
+    'CarliniWagnerLinf',  
+]
+epsilon_attacks = [
+    'FastGradientMethod', 
+    'ProjectedGradientDescent' ,
+    'AutoAttack', 
+    'BasicIterativeMethod'
 ]
 
 if __name__ == '__main__': 
@@ -75,7 +81,7 @@ if __name__ == '__main__':
     )
     network.train(dataset)
     
-    if args.attack == 'FastGradientMethod' or args.attack == 'ProjectedGradientDescent':
+    if args.attack in epsilon_attacks:
         # the attacker function call for the FGSM and PGD attack are the same since we
         # need to loop over the different values of epsilon in the attack. 
         for eps in epsilons:
