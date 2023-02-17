@@ -24,8 +24,19 @@ import numpy as np
 import tensorflow as tf 
 
 class VanillaCNN:
+    """
+    Implementation of a Vanilla CNN. This class uses a single resoluation image as the 
+    input to the network. 
+    """
     
     def __init__(self, learning_rate:float=0.0005, image_size:int=160, epochs:int=50):
+        """_summary_
+
+        Args:
+            learning_rate (float, optional): _description_. Defaults to 0.0005.
+            image_size (int, optional): _description_. Defaults to 160.
+            epochs (int, optional): _description_. Defaults to 50.
+        """
         self.image_size = image_size
         self.learning_rate = learning_rate
         self.histories = []
@@ -60,7 +71,8 @@ class VanillaCNN:
                   metrics=['accuracy'])
         self.network = model_res
     
-    def train(self, dataset): 
+    def train(self, dataset):
+        
         history = self.network.fit(
             dataset.train_ds,
             validation_data=dataset.valid_ds,
@@ -73,6 +85,13 @@ class VanillaCNN:
 class DenseNet121:
     
     def __init__(self, learning_rate:float=0.0005, image_size:int=160, epochs:int=50):
+        """_summary_
+
+        Args:
+            learning_rate (float, optional): _description_. Defaults to 0.0005.
+            image_size (int, optional): _description_. Defaults to 160.
+            epochs (int, optional): _description_. Defaults to 50.
+        """
         self.image_size = image_size
         self.learning_rate = learning_rate
         self.histories = []
@@ -121,6 +140,13 @@ class DenseNet121:
 
 class MultiResolutionNetwork: 
     def __init__(self, image_sizes:list=[32,64,160], learning_rate:float=0.0005, epochs:int=10): 
+        """_summary_
+
+        Args:
+            image_sizes (list, optional): _description_. Defaults to [32,64,160].
+            learning_rate (float, optional): _description_. Defaults to 0.0005.
+            epochs (int, optional): _description_. Defaults to 10.
+        """
         
         # require that we only have three image sizes... no more... no less. 
         if len(image_sizes) != 3: 
