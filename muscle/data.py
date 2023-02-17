@@ -164,11 +164,11 @@ class FusionDataLoader():
         )
         self.valid_labels = dl_03.y_valid
     
-    def load_adversarial(self, file_path:str):
+    def load_adversarial(self, file_path:str, image_size=[60,80,160]):
 
-        Xadv_160, yadv_160 = prepare_adversarial_data(file_path=file_path, image_size=160)
-        Xadv_80, yadv_80 = prepare_adversarial_data(file_path=file_path, image_size=80)
-        Xadv_60, yadv_60 = prepare_adversarial_data(file_path=file_path, image_size=60)
+        Xadv_160, yadv_160 = prepare_adversarial_data(file_path=file_path, image_size=image_size[2])
+        Xadv_80, yadv_80 = prepare_adversarial_data(file_path=file_path, image_size=image_size[1])
+        Xadv_60, yadv_60 = prepare_adversarial_data(file_path=file_path, image_size=image_size[0])
         
         # check that the labels line up 
         # TO DO 
