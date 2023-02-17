@@ -36,6 +36,8 @@ params = {
 }
     
 def main():
+    # train and evaluate the different models. the number of epochs needs to be
+    # changed for each resolution model. 
     performance_full = load_train_evaluate(params, [60, 80, 160])
     performance_160 = load_train_evaluate(params, 160)
     params['epochs'] = 35
@@ -43,6 +45,7 @@ def main():
     params['epochs'] = 75
     performance_60 = load_train_evaluate(params, 60)
     
+    # write the results into a pickle file 
     results = {
         'performance_full': performance_full, 
         'performance_160': performance_160, 
@@ -53,7 +56,6 @@ def main():
     with open(''.join([path_output, str(params['seed']), '.pkl']), 'wb') as f:
         pickle.dump(results, f) 
         
-
 if __name__ == '__main__': 
     tf.random.set_seed(params['seed'])
     main()
