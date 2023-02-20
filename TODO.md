@@ -3,4 +3,5 @@
 * Convert `main.py` to a script that accepts commandline arguments 
 * Add new attacks from `adversarial-robustness-toolbox`
 * Experiments 
-  * Run experiments with multiple random seeds. average the results 
+  * Run experiments with multiple random seeds. average the results
+* Combine Densenet and Resnet into a single class where the backbone can be chosen.  
