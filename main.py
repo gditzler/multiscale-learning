@@ -32,6 +32,7 @@ params = {
     'store_numpy': True, 
     'learning_rate': 0.0005, 
     'epochs': 20,
+    'backbone': 'VGG19', 
     'seed': 4321 
 }
     
@@ -53,7 +54,7 @@ def main():
         'performance_60': performance_60,  
         'params': params
     }
-    with open(''.join([path_output, str(params['seed']), '.pkl']), 'wb') as f:
+    with open(''.join([path_output, str(params['seed']), '_', params['backbone'],  '.pkl']), 'wb') as f:
         pickle.dump(results, f) 
         
 if __name__ == '__main__': 
