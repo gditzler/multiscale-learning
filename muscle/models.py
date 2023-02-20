@@ -80,7 +80,64 @@ class VanillaCNN:
             verbose=1
         )
         self.histories.append(history) 
+
+
+
+class ResNet50:  
+    
+    def __init__(self, learning_rate:float=0.0005, image_size:int=160, epochs:int=50):
+        """_summary_
+
+        Args:
+            learning_rate (float, optional): _description_. Defaults to 0.0005.
+            image_size (int, optional): _description_. Defaults to 160.
+            epochs (int, optional): _description_. Defaults to 50.
+        """
+        self.image_size = image_size
+        self.learning_rate = learning_rate
+        self.histories = []
+        self.epochs = epochs
+        
+        model_res = tf.keras.applications.resnet50.ResNet50(
+            weights='imagenet', 
+            include_top=False, 
+            input_shape=(self.image_size, self.image_size, 3)
+        )
+        for layer in model_res.layers:
+            layer.trainable = True
+
+        x = tf.keras.layers.Flatten()(model_res.output)
+        x = tf.keras.layers.Dense(1024, activation='relu')(x)
+        x = tf.keras.layers.Dropout(0.25)(x)
+        x = tf.keras.layers.Dense(512, activation='relu')(x)
+        x = tf.keras.layers.Dropout(0.25)(x)
+        x = tf.keras.layers.Dense(256, activation='relu')(x)
+        predictions = tf.keras.layers.Dense(10, activation = 'softmax')(x)
+
+        model_res = tf.keras.Model(inputs=model_res.input, outputs=predictions)
+
+        model_res.compile(optimizer=tf.keras.optimizers.SGD(learning_rate=self.learning_rate), 
+                  loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False), 
+                  metrics=['accuracy'])
+        self.network = model_res
+    
+    def train(self, dataset): 
+        history = self.network.fit(
+            dataset.train_ds,
+            validation_data=dataset.valid_ds,
+            epochs=self.epochs,
+            verbose=1
+        )
+        self.histories.append(history) 
+    
+    def predict(self, X): 
+        return self.network.predict(X)
+    
+    def evaluate(self, X, y): 
+        yhat = np.argmax(self.network.predict(X), axis=1) 
+        return (y==yhat).sum()/len(y)
  
+
 
 class DenseNet121:
     
@@ -139,7 +196,7 @@ class DenseNet121:
         
 
 class MultiResolutionNetwork: 
-    def __init__(self, image_sizes:list=[32,64,160], learning_rate:float=0.0005, epochs:int=10): 
+    def __init__(self, image_sizes:list=[32,64,160], learning_rate:float=0.0005, epochs:int=10, backbone:str='DenseNet121'): 
         """_summary_
 
         Args:
@@ -165,8 +222,15 @@ class MultiResolutionNetwork:
         # of backbone. 
         k = 0 
         
+        if backbone == 'DenseNet121': 
+            model_backbone = tf.keras.applications.densenet.DenseNet121 
+        elif backbone == 'ResNet50': 
+            model_backbone = tf.keras.applications.resnet.ResNet50
+        else: 
+            raise(ValueError(''.join(['Uknown backbone: ', backbone])))
+        
         # MODEL 01 - image_size[0]
-        model_01 = tf.keras.applications.densenet.DenseNet121(
+        model_01 = model_backbone(
             weights='imagenet', 
             include_top=False, 
             input_shape=(self.image_sizes[0], self.image_sizes[0], 3)
@@ -177,7 +241,7 @@ class MultiResolutionNetwork:
             k += 1
 
         # MODEL 02 - image_size[1]
-        model_02 = tf.keras.applications.densenet.DenseNet121(
+        model_02 = model_backbone(
             weights='imagenet', 
             include_top=False, 
             input_shape=(self.image_sizes[1], self.image_sizes[1], 3)
@@ -188,7 +252,7 @@ class MultiResolutionNetwork:
             k += 1
 
         # MODEL 03 - image_size[2]
-        model_03 = tf.keras.applications.densenet.DenseNet121(
+        model_03 = model_backbone(
             weights='imagenet', 
             include_top=False, 
             input_shape=(self.image_sizes[2], self.image_sizes[2], 3)
