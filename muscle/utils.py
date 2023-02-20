@@ -22,7 +22,7 @@
 
 import numpy as np 
 
-from .models import DenseNet121, MultiResolutionNetwork
+from .models import DenseNet121, MultiResolutionNetwork, SingleResolutionNet
 from .data import DataLoader, FusionDataLoader, prepare_adversarial_data
 
 epsilons = [(i+1)/100 for i in range(20)]
@@ -45,9 +45,10 @@ def load_train_evaluate(params, image_size):
             store_numpy=True
         )
        
-        network = DenseNet121(
+        network = SingleResolutionNet(
             learning_rate=params['learning_rate'],
             image_size=image_size, 
+            backbone=params['backbone'], 
             epochs=params['epochs']
         )
     elif len(image_size) == 3: 
@@ -60,6 +61,7 @@ def load_train_evaluate(params, image_size):
         dataloader.load_benign()
         network = MultiResolutionNetwork(
             image_sizes=image_size, 
+            backbone=params['backbone'], 
             learning_rate=params['learning_rate'], 
             epochs=params['epochs']
         )
