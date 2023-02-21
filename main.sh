@@ -23,7 +23,7 @@
 # SOFTWARE.
 
 SEED=1234
-ATTACKS=(FastGradientMethod ProjectedGradientDescent DeepFool)
+ATTACKS=(FastGradientMethod FastGradientSignMethod ProjectedGradientDescent DeepFool)
 
 # generate adversarial data
 for attack in ${ATTACKS[*]}; do
@@ -34,4 +34,4 @@ for attack in ${ATTACKS[*]}; do
 done 
 
 # get the results 
-# python main.py 
+python main.py 

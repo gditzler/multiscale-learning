@@ -222,7 +222,6 @@ class SingleResolutionNet:
         self.epochs = epochs
                 
         model_backbone = get_backbone(backbone=backbone)
-        
 
         model_res = model_backbone(
             weights='imagenet', 

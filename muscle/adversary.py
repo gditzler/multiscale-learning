@@ -46,7 +46,7 @@ class Attacker:
             input_shape=self.image_shape,
             clip_values=self.clip_values,
         )
-                
+                        
         if self.attack_type == 'FastGradientSignMethod': 
             adv_crafter = FastGradientMethod(classifier, eps=self.epsilon)
             Xadv = adv_crafter.generate(x=X)
