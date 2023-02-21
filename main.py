@@ -21,23 +21,17 @@
 # SOFTWARE.
 
 import tensorflow as tf 
+import yaml
 import pickle
 from muscle.utils import load_train_evaluate
 
-params = {
-    'batch_size': 128, 
-    'rotation': 40, 
-    'augment': False, 
-    'store_numpy': True, 
-    'learning_rate': 0.0005, 
-    'epochs': 20,
-    'backbone': 'VGG19', 
-    'data_path': 'data/', 
-    'output_path': 'outputs/results_seed_', 
-    'seed': 4321 
-}
+yaml_params = 'configs/config-vgg19.yaml'
     
 def main():
+    # load the parameters 
+    with open(yaml_params, 'rb') as f: 
+        params = yaml.load(f, Loader=yaml.FullLoader)
+    
     # train and evaluate the different models. the number of epochs needs to be
     # changed for each resolution model. 
     performance_full = load_train_evaluate(params, [60, 80, 160])

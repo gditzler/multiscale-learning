@@ -82,9 +82,6 @@ if __name__ == '__main__':
     )
     network.train(dataset)
     
-    print(args.attack)
-    print(args.attack in epsilon_attacks)
-    
     if args.attack in epsilon_attacks:
         # the attacker function call for the FGSM and PGD attack are the same since we
         # need to loop over the different values of epsilon in the attack. 
