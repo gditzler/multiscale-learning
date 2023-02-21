@@ -60,7 +60,7 @@ single_attacks = [
 ]
 epsilon_attacks = [
     'FastGradientMethod', 
-    'FastGradientSignMethod'
+    'FastGradientSignMethod', 
     'ProjectedGradientDescent' ,
     'AutoAttack', 
     'BasicIterativeMethod'
@@ -81,6 +81,9 @@ if __name__ == '__main__':
         epochs=10
     )
     network.train(dataset)
+    
+    print(args.attack)
+    print(args.attack in epsilon_attacks)
     
     if args.attack in epsilon_attacks:
         # the attacker function call for the FGSM and PGD attack are the same since we
