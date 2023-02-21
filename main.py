@@ -32,6 +32,9 @@ def main():
     with open(yaml_params, 'rb') as f: 
         params = yaml.load(f, Loader=yaml.FullLoader)
     
+    # set the random seed 
+    tf.random.set_seed(params['seed'])
+    
     # train and evaluate the different models. the number of epochs needs to be
     # changed for each resolution model. 
     performance_full = load_train_evaluate(params, [60, 80, 160])
@@ -53,5 +56,4 @@ def main():
         pickle.dump(results, f) 
         
 if __name__ == '__main__': 
-    tf.random.set_seed(params['seed'])
     main()
