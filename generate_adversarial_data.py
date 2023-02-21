@@ -60,6 +60,7 @@ single_attacks = [
 ]
 epsilon_attacks = [
     'FastGradientMethod', 
+    'FastGradientSignMethod'
     'ProjectedGradientDescent' ,
     'AutoAttack', 
     'BasicIterativeMethod'

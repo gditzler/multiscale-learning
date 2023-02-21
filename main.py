@@ -24,7 +24,6 @@ import tensorflow as tf
 import pickle
 from muscle.utils import load_train_evaluate
 
-path_output = 'outputs/single_resolution_performances_seed_'
 params = {
     'batch_size': 128, 
     'rotation': 40, 
@@ -33,6 +32,8 @@ params = {
     'learning_rate': 0.0005, 
     'epochs': 20,
     'backbone': 'VGG19', 
+    'data_path': 'data/', 
+    'output_path': 'outputs/results_seed_', 
     'seed': 4321 
 }
     
@@ -54,7 +55,7 @@ def main():
         'performance_60': performance_60,  
         'params': params
     }
-    with open(''.join([path_output, str(params['seed']), '_', params['backbone'],  '.pkl']), 'wb') as f:
+    with open(''.join([params['output_path'], str(params['seed']), '_', params['backbone'],  '.pkl']), 'wb') as f:
         pickle.dump(results, f) 
         
 if __name__ == '__main__': 

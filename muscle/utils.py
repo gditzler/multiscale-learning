@@ -22,7 +22,7 @@
 
 import numpy as np 
 
-from .models import DenseNet121, MultiResolutionNetwork, SingleResolutionNet
+from .models import MultiResolutionNetwork, SingleResolutionNet
 from .data import DataLoader, FusionDataLoader, prepare_adversarial_data
 
 epsilons = [(i+1)/100 for i in range(20)]
@@ -30,10 +30,11 @@ epsilons = [(i+1)/100 for i in range(20)]
 def load_train_evaluate(params, image_size): 
     performance = {}
     indices = [
-        'FastGradientMethod', 
+        'FastGradientMethod',
+        'FastGradientSignMethod',  
         'ProjectedGradientDescent', 
-        'AutoAttack', 
-        'BasicIterativeMethod'
+        # 'AutoAttack', 
+        # 'BasicIterativeMethod'
     ]
     
     if type(image_size) is int: 
@@ -80,7 +81,7 @@ def load_train_evaluate(params, image_size):
     for index in indices:     
         perf = np.zeros((len(epsilons,)))
         for n, eps in enumerate(epsilons):
-            file_path = ''.join(['outputs/Adversarial_', index, '_eps', str(eps), '.pkl'])
+            file_path = ''.join([params['data_path'], '/Adversarial_', index, '_eps', str(eps), '.pkl'])
             if type(image_size) is int:  
                 Xadv, yadv = prepare_adversarial_data(file_path=file_path, image_size=image_size)
                 perf[n] = network.evaluate(Xadv, yadv)
@@ -96,7 +97,7 @@ def load_train_evaluate(params, image_size):
         performance[index] = perf
     
     # evaluate deepfool 
-    file_path = 'outputs/Adversarial_DeepFool.pkl'
+    file_path = ''.join([params['data_path'], '/Adversarial_DeepFool.pkl'])
     if type(image_size) is int:  
         Xadv, yadv = prepare_adversarial_data(file_path=file_path, image_size=image_size)
         performance['DeepFool'] = network.evaluate(Xadv, yadv)

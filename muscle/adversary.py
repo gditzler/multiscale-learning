@@ -6,7 +6,7 @@
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
+# copies ofthe Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
 #
 # The above copyright notice and this permission notice shall be included in all
@@ -29,7 +29,7 @@ from art.attacks.evasion import CarliniLInfMethod, CarliniL2Method, CarliniL0Met
 from art.attacks.evasion import AutoAttack, BasicIterativeMethod
 
 class Attacker: 
-    def __init__(self, attack_type:str='FastGradientMethod', epsilon:float=0.1, clip_values:tuple=(0, 1), image_shape:tuple=(160,160,3), nb_classes:int=10, max_iter:int=10): 
+    def __init__(self, attack_type:str='FastGradientSignMethod', epsilon:float=0.1, clip_values:tuple=(0, 1), image_shape:tuple=(160,160,3), nb_classes:int=10, max_iter:int=10): 
         self.epsilon = epsilon
         self.attack_type = attack_type
         self.clip_values = clip_values
@@ -47,8 +47,11 @@ class Attacker:
             clip_values=self.clip_values,
         )
                 
-        if self.attack_type == 'FastGradientMethod': 
+        if self.attack_type == 'FastGradientSignMethod': 
             adv_crafter = FastGradientMethod(classifier, eps=self.epsilon)
+            Xadv = adv_crafter.generate(x=X)
+        elif self.attack_type == 'FastGradientMethod': 
+            adv_crafter = FastGradientMethod(classifier, eps=self.epsilon, norm=2)
             Xadv = adv_crafter.generate(x=X)
         elif self.attack_type == 'DeepFool': 
             adv_crafter = DeepFool(classifier)
@@ -56,6 +59,7 @@ class Attacker:
         elif self.attack_type == 'ProjectedGradientDescent': 
             adv_crafter = ProjectedGradientDescent(classifier, eps=self.epsilon, max_iter=self.max_iter)
             Xadv = adv_crafter.generate(x=X)
+        # from here down, the attacks take way too long to generate, 
         elif self.attack_type == 'CarliniWagnerL0': 
             adv_crafter = CarliniL0Method(classifier, max_iter=self.max_iter, targeted=False)
             Xadv = adv_crafter.generate(x=X)
