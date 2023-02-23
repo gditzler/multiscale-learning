@@ -49,33 +49,25 @@ class Attacker:
                         
         if self.attack_type == 'FastGradientSignMethod': 
             adv_crafter = FastGradientMethod(classifier, eps=self.epsilon)
-            Xadv = adv_crafter.generate(x=X)
         elif self.attack_type == 'FastGradientMethod': 
             adv_crafter = FastGradientMethod(classifier, eps=self.epsilon, norm=2)
-            Xadv = adv_crafter.generate(x=X)
         elif self.attack_type == 'DeepFool': 
             adv_crafter = DeepFool(classifier)
-            Xadv = adv_crafter.generate(x=X)
         elif self.attack_type == 'ProjectedGradientDescent': 
             adv_crafter = ProjectedGradientDescent(classifier, eps=self.epsilon, max_iter=self.max_iter)
-            Xadv = adv_crafter.generate(x=X)
         # from here down, the attacks take way too long to generate, 
         elif self.attack_type == 'CarliniWagnerL0': 
             adv_crafter = CarliniL0Method(classifier, max_iter=self.max_iter, targeted=False)
-            Xadv = adv_crafter.generate(x=X)
         elif self.attack_type == 'CarliniWagnerL2': 
             adv_crafter = CarliniL2Method(classifier, max_iter=self.max_iter, targeted=False)
-            Xadv = adv_crafter.generate(x=X)
         elif self.attack_type == 'CarliniWagnerLinf': 
             adv_crafter = CarliniLInfMethod(classifier, max_iter=self.max_iter, targeted=False)
-            Xadv = adv_crafter.generate(x=X)
         elif self.attack_type == 'AutoAttack': 
             adv_crafter = AutoAttack(classifier, eps=self.epsilon)
-            Xadv = adv_crafter.generate(x=X)
         elif self.attack_type == 'BasicIterativeMethod': 
             adv_crafter = BasicIterativeMethod(classifier, eps=self.epsilon)
-            Xadv = adv_crafter.generate(x=X)
         else: 
             ValueError('Unknown attack type')
         
+        Xadv = adv_crafter.generate(x=X)
         return Xadv

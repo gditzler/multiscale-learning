@@ -112,4 +112,3 @@ def load_train_evaluate(params, image_size):
         performance['DeepFool'] = network.evaluate(dataloader.valid_ds, dataloader.valid_labels)
     return performance
 
-
