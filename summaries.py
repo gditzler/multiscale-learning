@@ -26,7 +26,7 @@ import matplotlib.pylab as plt
 
 if __name__ == '__main__': 
     epsilons = [(i+1)/100 for i in range(20)]
-    file_name = 'outputs/single_resolution_performances_seed_1234.pkl'
+    file_name = 'outputs/results_seed_4321_DenseNet121.pkl'
     with open(file_name, 'rb') as file: 
         data_dict = pickle.load(file)
     
@@ -39,6 +39,22 @@ if __name__ == '__main__':
     plt.plot(epsilons, data_dict['performance_80']['FastGradientMethod'], 'k', marker='o', 
              label=''.join(['Dense-80 (', str(int(1000*data_dict['performance_80']['Benign'])/10), ')']))
     plt.plot(epsilons, data_dict['performance_60']['FastGradientMethod'], 'm', marker='o',  
+             label=''.join(['Dense-60 (', str(int(1000*data_dict['performance_60']['Benign'])/10), ')']))
+    plt.legend() 
+    plt.xlabel('epsilon')
+    plt.ylabel('Adversarial Performance')
+    plt.title('Fast Gradient Method')
+    plt.show() 
+
+
+    plt.figure() 
+    plt.plot(epsilons, data_dict['performance_full']['FastGradientSignMethod'], 'r', marker='o', 
+             label=''.join(['MNR (', str(int(1000*data_dict['performance_full']['Benign'])/10), ')']))
+    plt.plot(epsilons, data_dict['performance_160']['FastGradientSignMethod'], 'b', marker='o', 
+             label=''.join(['Dense-160 (', str(int(1000*data_dict['performance_160']['Benign'])/10), ')']))
+    plt.plot(epsilons, data_dict['performance_80']['FastGradientSignMethod'], 'k', marker='o', 
+             label=''.join(['Dense-80 (', str(int(1000*data_dict['performance_80']['Benign'])/10), ')']))
+    plt.plot(epsilons, data_dict['performance_60']['FastGradientSignMethod'], 'm', marker='o',  
              label=''.join(['Dense-60 (', str(int(1000*data_dict['performance_60']['Benign'])/10), ')']))
     plt.legend() 
     plt.xlabel('epsilon')
@@ -66,13 +82,23 @@ if __name__ == '__main__':
              label=''.join(['MNR-PGD (', str(int(1000*data_dict['performance_full']['Benign'])/10), ')']))
     plt.plot(epsilons, data_dict['performance_160']['ProjectedGradientDescent'], 'b', marker='o', 
              label=''.join(['Dense-160-PGD (', str(int(1000*data_dict['performance_160']['Benign'])/10), ')']))
-    plt.plot(epsilons, data_dict['performance_full']['FastGradientMethod'], 'k', marker='s', 
+    plt.plot(epsilons, data_dict['performance_full']['FastGradientSignMethod'], 'k', marker='s', 
              label=''.join(['MNR-FGSM (', str(int(1000*data_dict['performance_full']['Benign'])/10), ')']))
-    plt.plot(epsilons, data_dict['performance_160']['FastGradientMethod'], 'm', marker='s', 
+    plt.plot(epsilons, data_dict['performance_160']['FastGradientSignMethod'], 'm', marker='s', 
              label=''.join(['Dense-160-FGSM (', str(int(1000*data_dict['performance_160']['Benign'])/10), ')']))
     plt.legend() 
     plt.xlabel('epsilon')
     plt.ylabel('Adversarial Performance')
+    plt.show()
+  
+    y_pgd = (data_dict['performance_full']['ProjectedGradientDescent']-data_dict['performance_160']['ProjectedGradientDescent'])/data_dict['performance_160']['ProjectedGradientDescent']
+    y_fgsm = (data_dict['performance_full']['FastGradientSignMethod']-data_dict['performance_160']['FastGradientSignMethod'])/data_dict['performance_160']['FastGradientSignMethod']
+    plt.figure() 
+    plt.plot(epsilons, y_pgd*100, 'r', marker='o', label='PGD')
+    plt.plot(epsilons, y_fgsm*100, 'b', marker='o', label='FGSM')
+    plt.legend() 
+    plt.xlabel('epsilon')
+    plt.ylabel('Adversarial Performance Gain (%)')
     plt.show()
     
     print('|---------------------------------------------|')
