@@ -25,7 +25,7 @@ import argparse
 import tensorflow as tf 
 
 from muscle.data import DataLoader
-from muscle.models import DenseNet121
+from muscle.models import SingleResolutionNet
 from muscle.adversary import Attacker
 
 parser = argparse.ArgumentParser(
@@ -75,10 +75,11 @@ if __name__ == '__main__':
         augment=False,  
         store_numpy=True
     )
-    network = DenseNet121(
-        learning_rate=0.0005, 
-        image_size=160, 
-        epochs=10
+    network = SingleResolutionNet(
+            learning_rate=0.0005,
+            image_size=160, 
+            backbone='DenseNet121', 
+            epochs=10
     )
     network.train(dataset)
     
