@@ -22,7 +22,9 @@
 
 import numpy as np 
 import tensorflow as tf
-
+from art.estimators.classification import TensorFlowV2Classifier
+from art.defences.trainer import AdversarialTrainer
+from art.attacks.evasion import FastGradientMethod
 
 def get_backbone(backbone:str='DenseNet121') : 
     if backbone == 'DenseNet121': 
@@ -227,7 +229,12 @@ class DenseNet121:
 
 class SingleResolutionNet:  
     
-    def __init__(self, learning_rate:float=0.0005, image_size:int=160, epochs:int=50, backbone:str='DenseNet121', loss:str='cross_entropy'):
+    def __init__(self, 
+                 learning_rate:float=0.0005, 
+                 image_size:int=160, 
+                 epochs:int=50, 
+                 backbone:str='DenseNet121', 
+                 loss:str='cross_entropy'):
         """_summary_
 
         Args:
@@ -290,9 +297,96 @@ class SingleResolutionNet:
         return (y==yhat).sum()/len(y)
  
 
+class SingleResolutionAML: 
+    def __init__(self, 
+                 image_size:int=160, 
+                 backbone:str='DenseNet121', 
+                 learning_rate:float=0.0005, 
+                 epochs:int=25, 
+                 batch_size:int=128):
+        
+        self.backbone = backbone
+        self.image_size = image_size
+        self.learning_rate = learning_rate
+        self.epochs = epochs
+        self.batch_size = batch_size
+        
+        model_backbone = get_backbone(backbone)
+        model = model_backbone(
+            weights='imagenet', 
+            include_top=False, 
+            input_shape=(image_size, image_size, 3)
+        )
+
+        for layer in model.layers:
+            layer.trainable = True
+
+        x = tf.keras.layers.Flatten()(model.output)
+        x = tf.keras.layers.Dense(1024, activation='relu')(x)
+        x = tf.keras.layers.Dropout(0.25)(x)
+        x = tf.keras.layers.Dense(512, activation='relu')(x)
+        x = tf.keras.layers.Dropout(0.25)(x)
+        x = tf.keras.layers.Dense(256, activation='relu')(x)
+        predictions = tf.keras.layers.Dense(10, activation = 'softmax')(x)
+
+        model = tf.keras.Model(inputs=model.input, outputs=predictions)
+
+        model.compile(
+            loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), 
+            optimizer=tf.keras.optimizers.SGD(learning_rate=learning_rate), 
+            metrics=['accuracy']
+        )
+        self.network = model 
+        self.loss_object = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
+        self.optimizer = tf.keras.optimizers.SGD(learning_rate=learning_rate)
+    
+    def train(self, dataset): 
+        def train_step(model, images, labels):
+            with tf.GradientTape() as tape:
+                predictions = model(images, training=True)
+                loss = self.loss_object(labels, predictions)
+            gradients = tape.gradient(loss, model.trainable_variables)
+            self.optimizer.apply_gradients(zip(gradients, model.trainable_variables))
+        
+        self.network.fit(
+            dataset.train_ds, 
+            epochs=self.epochs
+        )
+        
+        model_art = TensorFlowV2Classifier(
+            model=self.network,
+            loss_object=self.loss_object, 
+            train_step=train_step, 
+            nb_classes=10,
+            input_shape=(self.image_size,self.image_size,3),
+            clip_values=(0,1),
+        )
+
+        attack = FastGradientMethod(model_art, eps=.075)
+        adv_trainer = AdversarialTrainer(model_art, attack)
+        adv_trainer.fit(
+            dataset.X_train, dataset.y_train, 
+            nb_epochs=self.epochs, 
+            batch_size=self.batch_size
+        )
+        self.adv_trainer = adv_trainer
+
+    def predict(self, X:np.ndarray): 
+        return self.adv_trainer.get_classifier().predict(X)
+    
+    def evaluate(self, X, y): 
+        yhat = np.argmax(self.predict(X), axis=1)
+        return (y==yhat).sum()/len(y)
+        
+
 
 class MultiResolutionNetwork: 
-    def __init__(self, image_sizes:list=[32,64,160], learning_rate:float=0.0005, epochs:int=10, backbone:str='DenseNet121', loss:str='cross_entropy'): 
+    def __init__(self, 
+                 image_sizes:list=[32,64,160], 
+                 learning_rate:float=0.0005, 
+                 epochs:int=10, 
+                 backbone:str='DenseNet121', 
+                 loss:str='cross_entropy'): 
         """_summary_
 
         Args:
