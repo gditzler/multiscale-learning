@@ -22,7 +22,7 @@
 
 import numpy as np 
 
-from .models import MultiResolutionNetwork, SingleResolutionNet, SingleResolutionAML
+from .model import MultiResolutionNetwork, SingleResolutionNet, SingleResolutionAML
 from .data import DataLoader, FusionDataLoader, prepare_adversarial_data
 
 epsilons = [(i+1)/100 for i in range(20)]

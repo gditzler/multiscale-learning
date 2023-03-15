@@ -25,7 +25,7 @@ import argparse
 import tensorflow as tf 
 
 from muscle.data import DataLoader
-from muscle.models import SingleResolutionNet
+from muscle.model import SingleResolutionNet
 from muscle.adversary import Attacker
 
 parser = argparse.ArgumentParser(
