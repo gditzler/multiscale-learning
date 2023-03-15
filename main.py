@@ -43,24 +43,29 @@ def main():
     # set the random seed 
     tf.random.set_seed(params['seed'])
     
+    # run the adversarial training experiment 
     performance_advt = load_amltrain_evaluate(params, 160, 0.05)
     
     # train and evaluate the different models. the number of epochs needs to be
     # changed for each resolution model. 
     performance_full = load_train_evaluate(params, [60, 80, 160])
     performance_160 = load_train_evaluate(params, 160)
-    params['epochs'] = 35
-    performance_80 = load_train_evaluate(params, 80)
-    params['epochs'] = 75
-    performance_60 = load_train_evaluate(params, 60)
+    params['loss'] = 'fisher_information'
+    performance_fim = load_train_evaluate(params, 160)
+    
+    # params['epochs'] = 35
+    # performance_80 = load_train_evaluate(params, 80)
+    # params['epochs'] = 75
+    # performance_60 = load_train_evaluate(params, 60)
     
     # write the results into a pickle file 
     results = {
         'performance_full': performance_full, 
         'performance_160': performance_160, 
-        'performance_80': performance_80,
-        'performance_60': performance_60,  
+        # 'performance_80': performance_80,
+        # 'performance_60': performance_60,  
         'performance_advt': performance_advt, 
+        'performance_fim': performance_fim, 
         'params': params
     }
     with open(output_path, 'wb') as f:
