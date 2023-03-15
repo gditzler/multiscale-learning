@@ -26,16 +26,16 @@ from .models import MultiResolutionNetwork, SingleResolutionNet, SingleResolutio
 from .data import DataLoader, FusionDataLoader, prepare_adversarial_data
 
 epsilons = [(i+1)/100 for i in range(20)]
+indices = [
+    'FastGradientMethod',
+    'FastGradientSignMethod',  
+    'ProjectedGradientDescent', 
+]
 
 
-def load_amltrain_evaluate(params, image_size, epsilon): 
+def load_amltrain_evaluate(params:dict, image_size:int=160, epsilon:float=0.075): 
     performance = {}
-    indices = [
-        'FastGradientMethod',
-        'FastGradientSignMethod',  
-        'ProjectedGradientDescent', 
-    ]
-    
+        
     dataloader = DataLoader(
         image_size=image_size, 
         batch_size=params['batch_size'], 
@@ -74,16 +74,9 @@ def load_amltrain_evaluate(params, image_size, epsilon):
 
 
  
-def load_train_evaluate(params, image_size): 
+def load_train_evaluate(params:dict, image_size:int=160): 
     performance = {}
-    indices = [
-        'FastGradientMethod',
-        'FastGradientSignMethod',  
-        'ProjectedGradientDescent', 
-        # 'AutoAttack', 
-        # 'BasicIterativeMethod'
-    ]
-    
+   
     if type(image_size) is int: 
         dataloader = DataLoader(
             image_size=image_size, 
