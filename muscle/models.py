@@ -26,7 +26,9 @@ from art.estimators.classification import TensorFlowV2Classifier
 from art.defences.trainer import AdversarialTrainer
 from art.attacks.evasion import FastGradientMethod
 
-def get_backbone(backbone:str='DenseNet121') : 
+def get_backbone(backbone:str='DenseNet121'):
+    """
+    """ 
     if backbone == 'DenseNet121': 
         model_backbone = tf.keras.applications.densenet.DenseNet121 
     elif backbone == 'ResNet50': 
@@ -314,6 +316,16 @@ class SingleResolutionAML:
                  epochs:int=25, 
                  epsilon:float=0.075, 
                  batch_size:int=128):
+        """Single Resolution Neural Network with Adversarial Training. 
+
+        Args:
+            image_size (int, optional): Image size (image_size x image_size x 3). Defaults to 160.
+            backbone (str, optional): Neural network backbone. Defaults to 'DenseNet121'.
+            learning_rate (float, optional): Floating point learning rate. Defaults to 0.0005.
+            epochs (int, optional): Number of epochs. Defaults to 25.
+            epsilon (float, optional): Adversarial budget. Defaults to 0.075.
+            batch_size (int, optional): Batch size for training and fine-tuning. Defaults to 128.
+        """
         
         self.backbone = backbone
         self.image_size = image_size
