@@ -357,12 +357,12 @@ class SingleResolutionAML:
         model = tf.keras.Model(inputs=model.input, outputs=predictions)
 
         model.compile(
-            loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), 
+            loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False), 
             optimizer=tf.keras.optimizers.SGD(learning_rate=learning_rate), 
             metrics=['accuracy']
         )
         self.network = model 
-        self.loss_object = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
+        self.loss_object = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False)
         self.optimizer = tf.keras.optimizers.SGD(learning_rate=learning_rate)
     
     def train(self, dataset): 
