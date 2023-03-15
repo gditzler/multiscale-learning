@@ -23,7 +23,7 @@
 import numpy as np 
 import tensorflow as tf
 from art.estimators.classification import TensorFlowV2Classifier
-from art.defences.trainer import AdversarialTrainer
+from art.defences.trainer import AdversarialTrainer, AdversarialTrainerFBF
 from art.attacks.evasion import FastGradientMethod
 
 def get_backbone(backbone:str='DenseNet121'):
@@ -314,6 +314,7 @@ class SingleResolutionAML:
                  backbone:str='DenseNet121', 
                  learning_rate:float=0.0005, 
                  epochs:int=25, 
+                 fbf:bool=False, 
                  epsilon:float=0.075, 
                  batch_size:int=128):
         """Single Resolution Neural Network with Adversarial Training. 
@@ -331,6 +332,7 @@ class SingleResolutionAML:
         self.image_size = image_size
         self.learning_rate = learning_rate
         self.epochs = epochs
+        self.fbf = fbf 
         self.batch_size = batch_size
         self.epsilon = epsilon
         
@@ -386,7 +388,11 @@ class SingleResolutionAML:
         )
 
         attack = FastGradientMethod(model_art, eps=self.epsilon)
-        adv_trainer = AdversarialTrainer(model_art, attack)
+        if self.fbf: 
+            adv_trainer = AdversarialTrainerFBF(model_art, attack)
+        else: 
+            adv_trainer = AdversarialTrainer(model_art, attack)
+            
         adv_trainer.fit(
             dataset.X_train, dataset.y_train, 
             nb_epochs=self.epochs, 
