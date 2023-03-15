@@ -23,7 +23,7 @@
 import tensorflow as tf 
 import yaml
 import pickle
-from muscle.utils import load_train_evaluate
+from muscle.utils import load_train_evaluate, load_amltrain_evaluate
 
 yaml_params = 'configs/config-vgg19.yaml'
  
@@ -43,6 +43,8 @@ def main():
     # set the random seed 
     tf.random.set_seed(params['seed'])
     
+    performance_advt = load_amltrain_evaluate(params, 160, 0.05)
+    
     # train and evaluate the different models. the number of epochs needs to be
     # changed for each resolution model. 
     performance_full = load_train_evaluate(params, [60, 80, 160])
@@ -58,6 +60,7 @@ def main():
         'performance_160': performance_160, 
         'performance_80': performance_80,
         'performance_60': performance_60,  
+        'performance_advt': performance_advt, 
         'params': params
     }
     with open(output_path, 'wb') as f:

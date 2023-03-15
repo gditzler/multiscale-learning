@@ -62,7 +62,10 @@ class VanillaCNN:
     input to the network. 
     """
     
-    def __init__(self, learning_rate:float=0.0005, image_size:int=160, epochs:int=50):
+    def __init__(self, 
+                 learning_rate:float=0.0005, 
+                 image_size:int=160, 
+                 epochs:int=50):
         """_summary_
 
         Args:
@@ -118,7 +121,10 @@ class VanillaCNN:
 
 class ResNet50:  
     
-    def __init__(self, learning_rate:float=0.0005, image_size:int=160, epochs:int=50):
+    def __init__(self, 
+                 learning_rate:float=0.0005, 
+                 image_size:int=160, 
+                 epochs:int=50):
         """_summary_
 
         Args:
@@ -174,7 +180,10 @@ class ResNet50:
 
 class DenseNet121:
     
-    def __init__(self, learning_rate:float=0.0005, image_size:int=160, epochs:int=50):
+    def __init__(self, 
+                 learning_rate:float=0.0005, 
+                 image_size:int=160, 
+                 epochs:int=50):
         """_summary_
 
         Args:
@@ -303,6 +312,7 @@ class SingleResolutionAML:
                  backbone:str='DenseNet121', 
                  learning_rate:float=0.0005, 
                  epochs:int=25, 
+                 epsilon:float=0.075, 
                  batch_size:int=128):
         
         self.backbone = backbone
@@ -310,6 +320,7 @@ class SingleResolutionAML:
         self.learning_rate = learning_rate
         self.epochs = epochs
         self.batch_size = batch_size
+        self.epsilon = epsilon
         
         model_backbone = get_backbone(backbone)
         model = model_backbone(
@@ -362,7 +373,7 @@ class SingleResolutionAML:
             clip_values=(0,1),
         )
 
-        attack = FastGradientMethod(model_art, eps=.075)
+        attack = FastGradientMethod(model_art, eps=self.epsilon)
         adv_trainer = AdversarialTrainer(model_art, attack)
         adv_trainer.fit(
             dataset.X_train, dataset.y_train, 

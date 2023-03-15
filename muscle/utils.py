@@ -22,10 +22,57 @@
 
 import numpy as np 
 
-from .models import MultiResolutionNetwork, SingleResolutionNet
+from .models import MultiResolutionNetwork, SingleResolutionNet, SingleResolutionAML
 from .data import DataLoader, FusionDataLoader, prepare_adversarial_data
 
 epsilons = [(i+1)/100 for i in range(20)]
+
+
+def load_amltrain_evaluate(params, image_size, epsilon): 
+    performance = {}
+    indices = [
+        'FastGradientMethod',
+        'FastGradientSignMethod',  
+        'ProjectedGradientDescent', 
+    ]
+    
+    dataloader = DataLoader(
+        image_size=image_size, 
+        batch_size=params['batch_size'], 
+        rotation=params['rotation'], 
+        augment=params['augment'], 
+        store_numpy=True
+    )
+       
+    network = SingleResolutionAML(
+        learning_rate=params['learning_rate'],
+        image_size=image_size, 
+        backbone=params['backbone'],
+        loss=params['loss'], 
+        epochs=params['epochs'], 
+        epsilon=epsilon
+    )
+    
+    network.train(dataloader)
+    
+    performance['Benign'] = network.evaluate(dataloader.X_valid, dataloader.y_valid)
+    
+    # evaluate the methods that have an epsilon parameter in the attack. 
+    for index in indices:     
+        perf = np.zeros((len(epsilons,)))
+        for n, eps in enumerate(epsilons):
+            file_path = ''.join([params['data_path'], '/Adversarial_', index, '_eps', str(eps), '.pkl'])
+            Xadv, yadv = prepare_adversarial_data(file_path=file_path, image_size=image_size)
+            perf[n] = network.evaluate(Xadv, yadv)
+        performance[index] = perf
+    
+    # evaluate deepfool 
+    file_path = ''.join([params['data_path'], '/Adversarial_DeepFool.pkl'])
+    Xadv, yadv = prepare_adversarial_data(file_path=file_path, image_size=image_size)
+    performance['DeepFool'] = network.evaluate(Xadv, yadv)
+    return performance
+
+
  
 def load_train_evaluate(params, image_size): 
     performance = {}
