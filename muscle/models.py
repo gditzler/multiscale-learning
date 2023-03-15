@@ -292,7 +292,7 @@ class SingleResolutionNet:
 
 
 class MultiResolutionNetwork: 
-    def __init__(self, image_sizes:list=[32,64,160], learning_rate:float=0.0005, epochs:int=10, backbone:str='DenseNet121'): 
+    def __init__(self, image_sizes:list=[32,64,160], learning_rate:float=0.0005, epochs:int=10, backbone:str='DenseNet121', loss:str='cross_entropy'): 
         """_summary_
 
         Args:
@@ -312,6 +312,7 @@ class MultiResolutionNetwork:
         self.learning_rate = learning_rate
         self.histories = []
         self.epochs = epochs
+        self.loss = loss 
         
         # need to set up an iterator than can be used to rename a layer of the network
         # because layer names need to be changed since we are going to use the same type 
@@ -373,10 +374,17 @@ class MultiResolutionNetwork:
             inputs=[model_01.input, model_02.input, model_03.input], 
             outputs=predictions
         )
+        
+        if self.loss == 'cross_entropy': 
+            loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False)
+        elif self.loss == 'fisher_information': 
+            loss = FisherInformationLoss()
+        else: 
+            raise(ValueError(''.join(['Unknown loss: ', self.loss])))
  
         self.network.compile(
             optimizer=tf.keras.optimizers.SGD(learning_rate=self.learning_rate), 
-            loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False), 
+            loss=loss, 
             metrics=['accuracy'], 
         )
         

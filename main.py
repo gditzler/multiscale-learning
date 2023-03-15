@@ -26,11 +26,19 @@ import pickle
 from muscle.utils import load_train_evaluate
 
 yaml_params = 'configs/config-vgg19.yaml'
-    
+ 
 def main():
     # load the parameters 
     with open(yaml_params, 'rb') as f: 
         params = yaml.load(f, Loader=yaml.FullLoader)
+    
+    output_path = ''.join([
+        params['output_path'], 
+        str(params['seed']), '_', 
+        params['backbone'],  '_', 
+        params['loss'], 
+        '.pkl'
+    ])
     
     # set the random seed 
     tf.random.set_seed(params['seed'])
@@ -52,7 +60,7 @@ def main():
         'performance_60': performance_60,  
         'params': params
     }
-    with open(''.join([params['output_path'], str(params['seed']), '_', params['backbone'],  '.pkl']), 'wb') as f:
+    with open(output_path, 'wb') as f:
         pickle.dump(results, f) 
         
 if __name__ == '__main__': 
