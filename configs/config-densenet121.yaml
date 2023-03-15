@@ -28,4 +28,5 @@ epochs: 20
 backbone: 'DenseNet121' 
 data_path: 'data/' 
 output_path: 'outputs/results_seed_' 
-seed: 4321 
+seed: 4321
+loss: 'cross_entropy' 
