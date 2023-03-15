@@ -29,7 +29,22 @@ from art.attacks.evasion import CarliniLInfMethod, CarliniL2Method, CarliniL0Met
 from art.attacks.evasion import AutoAttack, BasicIterativeMethod
 
 class Attacker: 
-    def __init__(self, attack_type:str='FastGradientSignMethod', epsilon:float=0.1, clip_values:tuple=(0, 1), image_shape:tuple=(160,160,3), nb_classes:int=10, max_iter:int=10): 
+    def __init__(self, 
+                 attack_type:str='FastGradientSignMethod', 
+                 epsilon:float=0.1, clip_values:tuple=(0, 1), 
+                 image_shape:tuple=(160,160,3), 
+                 nb_classes:int=10, 
+                 max_iter:int=10): 
+        """_summary_
+
+        Args:
+            attack_type (str, optional): _description_. Defaults to 'FastGradientSignMethod'.
+            epsilon (float, optional): _description_. Defaults to 0.1.
+            clip_values (tuple, optional): _description_. Defaults to (0, 1).
+            image_shape (tuple, optional): _description_. Defaults to (160,160,3).
+            nb_classes (int, optional): _description_. Defaults to 10.
+            max_iter (int, optional): _description_. Defaults to 10.
+        """
         self.epsilon = epsilon
         self.attack_type = attack_type
         self.clip_values = clip_values

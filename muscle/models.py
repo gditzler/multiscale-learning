@@ -408,7 +408,6 @@ class SingleResolutionAML:
         return (y==yhat).sum()/len(y)
         
 
-
 class MultiResolutionNetwork: 
     def __init__(self, 
                  image_sizes:list=[32,64,160], 
