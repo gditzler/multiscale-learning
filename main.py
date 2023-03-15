@@ -25,7 +25,7 @@ import yaml
 import pickle
 from muscle.utils import load_train_evaluate, load_amltrain_evaluate
 
-yaml_params = 'configs/config-vgg19.yaml'
+yaml_params = 'configs/config-densenet121.yaml'
  
 def main():
     # load the parameters 
@@ -48,8 +48,11 @@ def main():
     
     # train and evaluate the different models. the number of epochs needs to be
     # changed for each resolution model. 
+    # ---- multiscale model ---- 
     performance_full = load_train_evaluate(params, [60, 80, 160])
+    # ---- single res model ----
     performance_160 = load_train_evaluate(params, 160)
+    # ---- single FIM model ---- 
     params['loss'] = 'fisher_information'
     performance_fim = load_train_evaluate(params, 160)
     
