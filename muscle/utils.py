@@ -49,7 +49,8 @@ def load_train_evaluate(params, image_size):
         network = SingleResolutionNet(
             learning_rate=params['learning_rate'],
             image_size=image_size, 
-            backbone=params['backbone'], 
+            backbone=params['backbone'],
+            loss=params['loss'], 
             epochs=params['epochs']
         )
     elif len(image_size) == 3: 
