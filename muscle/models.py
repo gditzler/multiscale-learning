@@ -44,7 +44,10 @@ class FisherInformationLoss(tf.keras.losses.Loss):
         self.epsilon = 1e-6 
     
     def call(self, y_true, y_pred):
-        cross_entropy = tf.reduce_mean(-tf.reduce_sum(y_true * tf.log(y_pred), reduction_indices=[1]))
+        # reduction=tf.keras.losses.Reduction.SUM
+        scce = tf.keras.losses.SparseCategoricalCrossentropy()
+        cross_entropy = scce(y_true, y_pred)
+        # cross_entropy = tf.reduce_mean(-tf.reduce_sum(y_true * tf.log(y_pred), reduction_indices=[1]))
         if self.soften: 
             fisher = tf.reduce_mean(tf.log(1.0/(y_pred+self.epsilon)))
         else: 
@@ -224,7 +227,7 @@ class DenseNet121:
 
 class SingleResolutionNet:  
     
-    def __init__(self, learning_rate:float=0.0005, image_size:int=160, epochs:int=50, backbone:str='DenseNet121'):
+    def __init__(self, learning_rate:float=0.0005, image_size:int=160, epochs:int=50, backbone:str='DenseNet121', loss:str='cross_entropy'):
         """_summary_
 
         Args:
@@ -236,6 +239,7 @@ class SingleResolutionNet:
         self.learning_rate = learning_rate
         self.histories = []
         self.epochs = epochs
+        self.loss = loss 
                 
         model_backbone = get_backbone(backbone=backbone)
 
@@ -256,9 +260,16 @@ class SingleResolutionNet:
         predictions = tf.keras.layers.Dense(10, activation = 'softmax')(x)
 
         model_res = tf.keras.Model(inputs=model_res.input, outputs=predictions)
+        
+        if self.loss == 'cross_entropy': 
+            loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False)
+        elif self.loss == 'fisher_information': 
+            loss = FisherInformationLoss()
+        else: 
+            raise(ValueError(''.join(['Unknown loss: ', self.loss])))
 
         model_res.compile(optimizer=tf.keras.optimizers.SGD(learning_rate=self.learning_rate), 
-                  loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False), 
+                  loss=loss, 
                   metrics=['accuracy'])
         self.network = model_res
     
