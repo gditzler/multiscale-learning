@@ -48,7 +48,6 @@ def load_amltrain_evaluate(params:dict, image_size:int=160, epsilon:float=0.075)
         learning_rate=params['learning_rate'],
         image_size=image_size, 
         backbone=params['backbone'],
-        loss=params['loss'], 
         epochs=params['epochs'], 
         epsilon=epsilon
     )
