@@ -56,17 +56,10 @@ def main():
     params['loss'] = 'fisher_information'
     performance_fim = load_train_evaluate(params, 160)
     
-    # params['epochs'] = 35
-    # performance_80 = load_train_evaluate(params, 80)
-    # params['epochs'] = 75
-    # performance_60 = load_train_evaluate(params, 60)
-    
     # write the results into a pickle file 
     results = {
         'performance_full': performance_full, 
         'performance_160': performance_160, 
-        # 'performance_80': performance_80,
-        # 'performance_60': performance_60,  
         'performance_advt': performance_advt, 
         'performance_fim': performance_fim, 
         'params': params

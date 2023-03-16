@@ -8,4 +8,3 @@
   * Run experiments with multiple random seeds. average the results
   * Need to work on choosing the parameters for Resnet et al. DenseNet training relatively easily but the performance of ResNet is low.
 * Comparision: Fisher Information Regularization, Adversarial Training
-* Move `models.py` to a Python directory `muscle/models/__init__.py` 
