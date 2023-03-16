@@ -26,7 +26,7 @@ import matplotlib.pylab as plt
 
 if __name__ == '__main__': 
     epsilons = [(i+1)/100 for i in range(20)]
-    file_name = 'outputs/results_seed_4321_DenseNet121.pkl'
+    file_name = 'outputs/results_seed_4321_VGG19.pkl'
     with open(file_name, 'rb') as file: 
         data_dict = pickle.load(file)
     
