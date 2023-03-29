@@ -37,7 +37,10 @@ def get_backbone(backbone:str='DenseNet121'):
 
 class FisherInformationLoss(tf.keras.losses.Loss): 
 
-    def __init__(self, lambda_reg:float=0.5, soften:bool=False): 
+    def __init__(self, lambda_reg:float=0.5, soften:bool=False):
+        """Fisher information regularization loss 
+        
+        """ 
         super().__init__()
         self.lambda_reg = lambda_reg
         self.soften = soften
