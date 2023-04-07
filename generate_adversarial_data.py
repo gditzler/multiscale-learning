@@ -69,7 +69,7 @@ epsilon_attacks = [
 if __name__ == '__main__': 
     tf.random.set_seed(args.seed)
     dataset = DataLoader(
-        image_size=120, 
+        image_size=160, 
         batch_size=128, 
         rotation=40, 
         augment=False,  
@@ -77,9 +77,9 @@ if __name__ == '__main__':
     )
     network = SingleResolutionNet(
             learning_rate=0.0005,
-            image_size=120, 
+            image_size=160, 
             backbone='DenseNet121', 
-            epochs=1
+            epochs=10
     )
     network.train(dataset)
     
