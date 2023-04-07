@@ -28,7 +28,11 @@ from muscle.utils import load_train_evaluate, load_amltrain_evaluate
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--yaml_params', type=str, default='configs/config-densenet121.yaml')
+parser.add_argument(
+    '--yaml_params', 
+    type=str, 
+    default='configs/config-densenet121.yaml'
+)
 args = parser.parse_args()
  
 def main():
