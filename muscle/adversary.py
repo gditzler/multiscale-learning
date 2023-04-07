@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from tqdm import tqdm
 import numpy as np 
 import tensorflow as tf 
 
@@ -27,6 +28,7 @@ from art.estimators.classification import TensorFlowV2Classifier
 from art.attacks.evasion import FastGradientMethod, DeepFool, ProjectedGradientDescent
 from art.attacks.evasion import CarliniLInfMethod, CarliniL2Method, CarliniL0Method
 from art.attacks.evasion import AutoAttack, BasicIterativeMethod
+
 
 class Attacker: 
     def __init__(self, 
@@ -84,5 +86,63 @@ class Attacker:
         else: 
             ValueError('Unknown attack type')
         
-        Xadv = adv_crafter.generate(x=X)
+        if self.attack_type != 'CarliniWagnerL0':  
+            Xadv = adv_crafter.generate(x=X)
+        else: 
+            mini_batch = 128
+            Xadv = np.zeros(X.shape)
+
+            for i in tqdm(range(len(X)//mini_batch+1)): 
+                i_start, i_stop = i*mini_batch, (i+1)*mini_batch
+                if i_stop >= len(X): i_stop = len(X)
+                Xadv[i_start:i_stop] = carlini_wagner_l0(network, X[i_start:i_stop], y[i_start:i_stop])
+
         return Xadv
+
+
+
+def carlini_wagner_l0(model, x, y, k=0.01, c=0.1, max_iterations=1000, epsilon=0.1):
+    """
+    Implementation of the untargeted Carlini-Wagner L0 attack.
+
+    Arguments:
+    - model: A TensorFlow model, either a `tf.keras.Model` or a `tf.Graph` with a `tf.Session`
+    - x: A tensor of shape (batch_size, dims) representing the input samples
+    - y: A tensor of shape (batch_size,) representing the true labels of the input samples
+    - k: A float representing the confidence level of the attack
+    - c: A float representing the weight of the L2 penalty term
+    - max_iterations: An integer representing the maximum number of iterations to run the attack
+    - epsilon: A float representing the L0 budget for the attack
+
+    Returns:
+    - A tensor of shape (batch_size, dims) representing the adversarial examples
+    """
+    # y = tf.convert_to_tensor(1.0*OneHotEncoder(sparse_output=False).fit(y.reshape(-1,1)).transform(y.reshape(-1,1)))
+    # print(y)
+    y = tf.convert_to_tensor(y)
+    # Define the loss function
+    def loss_fn(x_adv, x, y):
+        logits = model(x_adv)
+        pred = tf.argmax(logits, axis=-1)
+        correct = tf.equal(pred, y)
+        loss1 = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=tf.one_hot(y, depth=10), logits=logits))
+        loss2 = k * tf.reduce_mean(tf.norm(x_adv - x, ord=2, axis=-1))**2
+        loss3 = tf.reduce_sum(tf.abs(x_adv - x))
+        loss3 = tf.reduce_mean(tf.where(correct, 0.0, loss3))
+        return loss1 + loss2 + c * loss3
+
+    # Define the optimizer
+    optimizer = tf.optimizers.SGD(learning_rate=0.01)
+
+    # Define the tensor for the adversarial examples
+    x_adv = tf.Variable(x, dtype=tf.float32)
+
+    for _ in range(max_iterations):
+        with tf.GradientTape() as tape:
+            tape.watch(x_adv)
+            loss = loss_fn(x_adv, x, y)
+        grad = tape.gradient(loss, x_adv)
+        optimizer.apply_gradients(zip([grad], [x_adv]))
+        x_adv.assign(tf.clip_by_value(x_adv, x - epsilon, x + epsilon))
+
+    return x_adv
