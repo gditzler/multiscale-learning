@@ -31,7 +31,10 @@ indices = [
     'FastGradientSignMethod',  
     'ProjectedGradientDescent', 
 ]
-
+attacks_without_epsilon = [
+    'DeepFool', 
+    'CarliniWagnerL0'
+]
 
 def load_amltrain_evaluate(params:dict, image_size:int=160, epsilon:float=0.075): 
     performance = {}
@@ -65,10 +68,12 @@ def load_amltrain_evaluate(params:dict, image_size:int=160, epsilon:float=0.075)
             perf[n] = network.evaluate(Xadv, yadv)
         performance[index] = perf
     
-    # evaluate deepfool 
-    file_path = ''.join([params['data_path'], '/Adversarial_DeepFool.pkl'])
-    Xadv, yadv = prepare_adversarial_data(file_path=file_path, image_size=image_size)
-    performance['DeepFool'] = network.evaluate(Xadv, yadv)
+    # evaluate attacks without epsilon  
+    for index in attacks_without_epsilon: 
+        file_path = ''.join([params['data_path'], '/Adversarial_', index, '.pkl'])
+        Xadv, yadv = prepare_adversarial_data(file_path=file_path, image_size=image_size)
+        performance[index] = network.evaluate(Xadv, yadv)
+
     return performance
 
 
@@ -136,19 +141,19 @@ def load_train_evaluate(params:dict, image_size:int=160):
                 perf[n] = network.evaluate(dataloader.valid_ds, dataloader.valid_labels)
         performance[index] = perf
     
-    # evaluate deepfool 
-    file_path = ''.join([params['data_path'], '/Adversarial_DeepFool.pkl'])
-    if type(image_size) is int:  
-        Xadv, yadv = prepare_adversarial_data(file_path=file_path, image_size=image_size)
-        performance['DeepFool'] = network.evaluate(Xadv, yadv)
-    else: 
-        dataloader = FusionDataLoader(
-            image_size=image_size, 
-            batch_size=params['batch_size'], 
-            rotation=params['rotation'], 
-            augment=False
-        )
-        dataloader.load_adversarial(file_path=file_path)
-        performance['DeepFool'] = network.evaluate(dataloader.valid_ds, dataloader.valid_labels)
+    for index in attacks_without_epsilon:
+        file_path = ''.join([params['data_path'], '/Adversarial_', index,'.pkl'])
+        if type(image_size) is int:  
+            Xadv, yadv = prepare_adversarial_data(file_path=file_path, image_size=image_size)
+            performance[index] = network.evaluate(Xadv, yadv)
+        else: 
+            dataloader = FusionDataLoader(
+                image_size=image_size, 
+                batch_size=params['batch_size'], 
+                rotation=params['rotation'], 
+                augment=False
+            )
+            dataloader.load_adversarial(file_path=file_path)
+            performance[index] = network.evaluate(dataloader.valid_ds, dataloader.valid_labels)
     return performance
 
