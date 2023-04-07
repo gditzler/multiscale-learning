@@ -101,7 +101,7 @@ class Attacker:
 
 
 
-def carlini_wagner_l0(model, x, y, k=0.01, c=0.1, max_iterations=1000, epsilon=0.1):
+def carlini_wagner_l0(model, x, y, k=0.01, c=0.1, max_iterations=10, epsilon=0.1):
     """
     Implementation of the untargeted Carlini-Wagner L0 attack.
 
