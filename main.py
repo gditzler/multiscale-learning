@@ -22,14 +22,18 @@
 
 import tensorflow as tf 
 import yaml
+import argparse
 import pickle
 from muscle.utils import load_train_evaluate, load_amltrain_evaluate
 
-yaml_params = 'configs/config-densenet121.yaml'
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--yaml_params', type=str, default='configs/config-densenet121.yaml')
+args = parser.parse_args()
  
 def main():
     # load the parameters 
-    with open(yaml_params, 'rb') as f: 
+    with open(args.yaml_params, 'rb') as f: 
         params = yaml.load(f, Loader=yaml.FullLoader)
     
     output_path = ''.join([

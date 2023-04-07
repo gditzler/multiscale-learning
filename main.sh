@@ -23,14 +23,14 @@
 # SOFTWARE.
 
 SEED=1234
-ATTACKS=(FastGradientMethod FastGradientSignMethod ProjectedGradientDescent DeepFool)
+ATTACKS=(FastGradientMethod FastGradientSignMethod ProjectedGradientDescent DeepFool CaliniWagnerL0)
 
 # generate adversarial data
 for attack in ${ATTACKS[*]}; do
     echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
     echo "Generate data for the ${attack} attack."
     echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-    python generate_adversarial_data.py -o data/ -s ${SEED} -a ${attack} 
+    echo "python generate_adversarial_data.py -o data/ -s ${SEED} -a ${attack}"
 done 
 
 # get the results 
