@@ -37,6 +37,16 @@ attacks_without_epsilon = [
 ]
 
 def load_amltrain_evaluate(params:dict, image_size:int=160, epsilon:float=0.075): 
+    """_summary_
+
+    Args:
+        params (dict): _description_
+        image_size (int, optional): _description_. Defaults to 160.
+        epsilon (float, optional): _description_. Defaults to 0.075.
+
+    Returns:
+        _type_: _description_
+    """
     performance = {}
         
     dataloader = DataLoader(
@@ -79,6 +89,15 @@ def load_amltrain_evaluate(params:dict, image_size:int=160, epsilon:float=0.075)
 
  
 def load_train_evaluate(params:dict, image_size:int=160): 
+    """_summary_
+
+    Args:
+        params (dict): _description_
+        image_size (int, optional): _description_. Defaults to 160.
+
+    Returns:
+        _type_: _description_
+    """
     performance = {}
    
     if type(image_size) is int: 

@@ -6,4 +6,5 @@ data/Adversarial*.pkl
 .DS_Store
 
 # folders to ignore 
+clinic/
 ~
