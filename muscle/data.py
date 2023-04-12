@@ -121,6 +121,7 @@ class DataGenFusion(tf.keras.utils.Sequence):
         self.batch_size = batch_size
         self.shuffle = shuffle
         self.n = len(self.X1)
+        self.size = len(self.X1)
 
     def on_epoch_end(self):
         pass
@@ -128,6 +129,9 @@ class DataGenFusion(tf.keras.utils.Sequence):
     def __getitem__(self, index):
         i = np.random.randint(0, self.n, self.batch_size)
         return (self.X1[i], self.X2[i], self.X3[i]), self.Y[i]
+    
+    def get_batch(self): 
+        return self.__getitem__(0)
     
     def __len__(self):
         return self.n // self.batch_size

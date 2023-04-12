@@ -155,7 +155,9 @@ class MultiResolutionNetworkAT:
                  learning_rate:float=0.0005, 
                  epochs:int=10, 
                  epsilon:float=0.075,
+                 fbf:bool=False, 
                  backbone:str='DenseNet121', 
+                 batch_size:int=128, 
                  loss:str='cross_entropy'): 
         """_summary_
 
@@ -177,7 +179,9 @@ class MultiResolutionNetworkAT:
         self.learning_rate = learning_rate
         self.histories = []
         self.epochs = epochs
-        self.loss = loss 
+        self.loss = loss
+        self.fbf = fbf  
+        self.batch_size = batch_size
         
         # need to set up an iterator than can be used to rename a layer of the network
         # because layer names need to be changed since we are going to use the same type 
@@ -276,7 +280,7 @@ class MultiResolutionNetworkAT:
             loss_object=self.loss_object, 
             train_step=train_step, 
             nb_classes=10,
-            input_shape=(self.image_size,self.image_size,3),
+            input_shape=[(60,60,3), (80,80,3), (160,160,3)], #(self.image_size,self.image_size,3),
             clip_values=(0,1),
         )
 
@@ -286,8 +290,8 @@ class MultiResolutionNetworkAT:
         else: 
             adv_trainer = AdversarialTrainer(model_art, attack)
             
-        adv_trainer.fit(
-            dataset.X_train, dataset.y_train, 
+        adv_trainer.fit_generator(
+            dataset.train_ds, # dataset.X_train, dataset.y_train, 
             nb_epochs=self.epochs, 
             batch_size=self.batch_size
         )
