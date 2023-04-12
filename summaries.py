@@ -34,12 +34,12 @@ if __name__ == '__main__':
     plt.figure()
     plt.plot(epsilons, data_dict['performance_full']['FastGradientSignMethod'], 'r', marker='o', 
              label=''.join(['MNR (', str(int(1000*data_dict['performance_full']['Benign'])/10), ')']))
-    plt.plot(epsilons, data_dict['performance_160']['FastGradientSignMethod'], 'b', marker='o', 
+    plt.plot(epsilons, data_dict['performance_160']['FastGradientSignMethod'], 'b', marker='p', 
              label=''.join(['Dense-160 (', str(int(1000*data_dict['performance_160']['Benign'])/10), ')']))
-    plt.plot(epsilons, data_dict['performance_advt']['FastGradientSignMethod'], 'b', marker='o', 
+    plt.plot(epsilons, data_dict['performance_advt']['FastGradientSignMethod'], 'k', marker='*', 
              label=''.join(['AT (', str(int(1000*data_dict['performance_advt']['Benign'])/10), ')']))
-    plt.plot(epsilons, data_dict['performance_fim']['FastGradientSignMethod'], 'b', marker='o', 
-             label=''.join(['FIM (', str(int(1000*data_dict['performance_fim']['Benign'])/10), ')']))
+    #plt.plot(epsilons, data_dict['performance_fim']['FastGradientSignMethod'], 'm', marker='s', 
+    #         label=''.join(['FIM (', str(int(1000*data_dict['performance_fim']['Benign'])/10), ')']))
     plt.legend() 
     plt.xlabel('epsilon')
     plt.ylabel('Adversarial Performance')

@@ -22,7 +22,7 @@
 
 import numpy as np 
 
-from .model import MultiResolutionNetwork, SingleResolutionNet, SingleResolutionAML
+from .model import MultiResolutionNetwork, SingleResolutionNet, SingleResolutionAML, MultiResolutionNetworkAT
 from .data import DataLoader, FusionDataLoader, prepare_adversarial_data
 
 epsilons = [(i+1)/100 for i in range(20)]
@@ -36,59 +36,8 @@ attacks_without_epsilon = [
     'CarliniWagnerL0'
 ]
 
-def load_amltrain_evaluate(params:dict, image_size:int=160, epsilon:float=0.075): 
-    """_summary_
-
-    Args:
-        params (dict): _description_
-        image_size (int, optional): _description_. Defaults to 160.
-        epsilon (float, optional): _description_. Defaults to 0.075.
-
-    Returns:
-        _type_: _description_
-    """
-    performance = {}
-        
-    dataloader = DataLoader(
-        image_size=image_size, 
-        batch_size=params['batch_size'], 
-        rotation=params['rotation'], 
-        augment=params['augment'], 
-        store_numpy=True
-    )
-       
-    network = SingleResolutionAML(
-        learning_rate=params['learning_rate'],
-        image_size=image_size, 
-        backbone=params['backbone'],
-        epochs=params['epochs'], 
-        epsilon=epsilon
-    )
-    
-    network.train(dataloader)
-    
-    performance['Benign'] = network.evaluate(dataloader.X_valid, dataloader.y_valid)
-    
-    # evaluate the methods that have an epsilon parameter in the attack. 
-    for index in indices:     
-        perf = np.zeros((len(epsilons,)))
-        for n, eps in enumerate(epsilons):
-            file_path = ''.join([params['data_path'], '/Adversarial_', index, '_eps', str(eps), '.pkl'])
-            Xadv, yadv = prepare_adversarial_data(file_path=file_path, image_size=image_size)
-            perf[n] = network.evaluate(Xadv, yadv)
-        performance[index] = perf
-    
-    # evaluate attacks without epsilon  
-    for index in attacks_without_epsilon: 
-        file_path = ''.join([params['data_path'], '/Adversarial_', index, '.pkl'])
-        Xadv, yadv = prepare_adversarial_data(file_path=file_path, image_size=image_size)
-        performance[index] = network.evaluate(Xadv, yadv)
-
-    return performance
-
-
  
-def load_train_evaluate(params:dict, image_size:int=160): 
+def load_train_evaluate(params:dict, image_size:int=160, adversarial_training:bool=False, epsilon:float=0.075): 
     """_summary_
 
     Args:
@@ -108,14 +57,25 @@ def load_train_evaluate(params:dict, image_size:int=160):
             augment=params['augment'], 
             store_numpy=True
         )
-       
-        network = SingleResolutionNet(
-            learning_rate=params['learning_rate'],
-            image_size=image_size, 
-            backbone=params['backbone'],
-            loss=params['loss'], 
-            epochs=params['epochs']
-        )
+        
+        if adversarial_training: 
+            network = SingleResolutionAML(
+                learning_rate=params['learning_rate'],
+                image_size=image_size, 
+                backbone=params['backbone'],
+                loss=params['loss'], 
+                epochs=params['epochs'], 
+                epsilon=epsilon
+            )
+        else: 
+            network = SingleResolutionNet(
+                learning_rate=params['learning_rate'],
+                image_size=image_size, 
+                backbone=params['backbone'],
+                loss=params['loss'], 
+                epochs=params['epochs']
+            )
+
     elif len(image_size) == 3: 
         dataloader = FusionDataLoader(
             image_size=image_size, 
@@ -124,12 +84,22 @@ def load_train_evaluate(params:dict, image_size:int=160):
             augment=False
         )
         dataloader.load_benign()
-        network = MultiResolutionNetwork(
-            image_sizes=image_size, 
-            backbone=params['backbone'], 
-            learning_rate=params['learning_rate'], 
-            epochs=params['epochs']
-        )
+        
+        if adversarial_training: 
+            network = MultiResolutionNetworkAT(
+                image_sizes=image_size, 
+                backbone=params['backbone'], 
+                learning_rate=params['learning_rate'], 
+                epochs=params['epochs'],
+                epsilon=epsilon
+            )
+        else: 
+            network = MultiResolutionNetwork(
+                image_sizes=image_size, 
+                backbone=params['backbone'], 
+                learning_rate=params['learning_rate'], 
+                epochs=params['epochs']
+            )
     else: 
         raise(ValueError('image_size needs to be len() 3 or 1.'))
     

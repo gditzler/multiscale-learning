@@ -21,15 +21,17 @@
 # SOFTWARE.
 
 from .densenet121 import DenseNet121 
-from .multiscale_network import MultiResolutionNetwork
+from .multiscale_network import MultiResolutionNetwork, MultiResolutionNetworkAT
 from .resnet50 import ResNet50
 from .single_scale_network import SingleResolutionAML, SingleResolutionNet
 from .utils import FisherInformationLoss, get_backbone
 from .vanilla_cnn import VanillaCNN
 
+
 __all__ = [
     'DenseNet121', 
     'MultiResolutionNetwork', 
+    'MultiResolutionNetworkAT', 
     'ResNet50', 
     'SingleResolutionAML', 
     'SingleResolutionNet', 
