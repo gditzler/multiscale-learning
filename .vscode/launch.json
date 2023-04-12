@@ -5,12 +5,27 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Current File",
+            "name": "main.py",
             "type": "python",
             "request": "launch",
-            "program": "${file}",
+            "program": "main.py",
             "console": "integratedTerminal",
-            "args": ["-s", "1234", "-o", "data/", "-a", "CarliniWagnerL0"], 
+            "justMyCode": true
+        },
+        {
+            "name": "generate_adversarial_data.py",
+            "type": "python",
+            "request": "launch",
+            "program": "generate_adversarial_data.py",
+            "console": "integratedTerminal",
+            "args": [
+                "-s",
+                "1234",
+                "-o",
+                "data/",
+                "-a",
+                "CarliniWagnerL0"
+            ],
             "justMyCode": true
         }
     ]
