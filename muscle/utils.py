@@ -72,7 +72,8 @@ def load_train_evaluate(params:dict, image_size:int=160, adversarial_training:bo
                 learning_rate=params['learning_rate'],
                 image_size=image_size, 
                 backbone=params['backbone'],
-                loss=params['loss'], 
+                loss=params['loss'],
+                fisher_reg=params['fisher_reg'],  
                 epochs=params['epochs']
             )
 

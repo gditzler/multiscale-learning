@@ -35,7 +35,8 @@ class SingleResolutionNet:
                  image_size:int=160, 
                  epochs:int=50, 
                  backbone:str='DenseNet121', 
-                 loss:str='cross_entropy'):
+                 loss:str='cross_entropy', 
+                 fisher_reg:float=1e-6):
         """_summary_
 
         Args:
@@ -72,7 +73,7 @@ class SingleResolutionNet:
         if self.loss == 'cross_entropy': 
             loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False)
         elif self.loss == 'fisher_information': 
-            loss = FisherInformationLoss(lambda_reg=1e-5)
+            loss = FisherInformationLoss(lambda_reg=fisher_reg)
         else: 
             raise(ValueError(''.join(['Unknown loss: ', self.loss])))
 

@@ -19,15 +19,17 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-batch_size: 128 
-rotation: 40 
-augment: False 
-store_numpy: True 
-learning_rate: 0.0005 
-epochs: 20
-backbone: 'VGG19' 
-data_path: 'data/' 
-output_path: 'outputs/results_seed_' 
-seed: 4321
-loss: 'cross_entropy'
-fisher_reg: 1e-6 
+
+import numpy as np 
+
+N = 4231
+X = np.random.randn(N, 12, 12)
+Xn = np.zeros((N, 12, 12))
+
+mini_batch = 128 
+
+for i in range(len(X)//mini_batch+1): 
+    i_start, i_stop = i*mini_batch, (i+1)*mini_batch
+    if i_stop >= len(X): i_stop = len(X)
+    Xn[i_start:i_stop] = X[i_start:i_stop]
+    print(i_stop-i_start)

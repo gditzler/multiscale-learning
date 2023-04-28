@@ -29,4 +29,5 @@ backbone: 'DenseNet121'
 data_path: 'data/' 
 output_path: 'outputs/results_seed_' 
 seed: 4321
-loss: 'cross_entropy' 
+loss: 'cross_entropy'
+fisher_reg: 1e-6  
