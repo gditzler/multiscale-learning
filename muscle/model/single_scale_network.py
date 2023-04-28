@@ -72,7 +72,7 @@ class SingleResolutionNet:
         if self.loss == 'cross_entropy': 
             loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False)
         elif self.loss == 'fisher_information': 
-            loss = FisherInformationLoss()
+            loss = FisherInformationLoss(lambda_reg=1e-5)
         else: 
             raise(ValueError(''.join(['Unknown loss: ', self.loss])))
 
