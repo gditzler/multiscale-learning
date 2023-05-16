@@ -111,7 +111,9 @@ class SingleResolutionAML:
                  learning_rate:float=0.0005, 
                  epochs:int=25, 
                  fbf:bool=False, 
-                 epsilon:float=0.075, 
+                 epsilon:float=0.075,
+                 loss:str='cross_entropy',
+                 fisher_reg:float=1e-6,  
                  batch_size:int=128):
         """Single Resolution Neural Network with Adversarial Training. 
 
@@ -131,6 +133,7 @@ class SingleResolutionAML:
         self.fbf = fbf 
         self.batch_size = batch_size
         self.epsilon = epsilon
+        self.loss = loss 
         
         model_backbone = get_backbone(backbone)
         model = model_backbone(
@@ -151,14 +154,21 @@ class SingleResolutionAML:
         predictions = tf.keras.layers.Dense(10, activation = 'softmax')(x)
 
         model = tf.keras.Model(inputs=model.input, outputs=predictions)
+        
+        if self.loss == 'cross_entropy': 
+            loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False)
+        elif self.loss == 'fisher_information': 
+            loss = FisherInformationLoss(lambda_reg=fisher_reg)
+        else: 
+            raise(ValueError(''.join(['Unknown loss: ', self.loss])))
 
         model.compile(
-            loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False), 
+            loss=loss, 
             optimizer=tf.keras.optimizers.SGD(learning_rate=learning_rate), 
             metrics=['accuracy']
         )
         self.network = model 
-        self.loss_object = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False)
+        self.loss_object = loss
         self.optimizer = tf.keras.optimizers.SGD(learning_rate=learning_rate)
     
     def train(self, dataset): 
