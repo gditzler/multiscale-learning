@@ -26,7 +26,7 @@ from art.estimators.classification import TensorFlowV2Classifier
 from art.defences.trainer import AdversarialTrainer, AdversarialTrainerFBF
 from art.attacks.evasion import FastGradientMethod
 
-
+from .utils import read_score_mrn
 from .utils import get_backbone, FisherInformationLoss
 
 class MultiResolutionNetwork: 
@@ -146,6 +146,10 @@ class MultiResolutionNetwork:
         data = (dataset.X1, dataset.X2, dataset.X3)
         yhat = np.argmax(self.network.predict(data), axis=1) 
         return (labels==yhat).sum()/len(yhat)
+
+    def evaluate_read(self, dataset_benign, dataset_adversary): 
+        return read_score_mrn(self.network, dataset_benign, dataset_adversary)
+    
       
 
 

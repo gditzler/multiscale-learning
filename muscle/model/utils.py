@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import numpy as np 
 import tensorflow as tf 
 
 def get_backbone(backbone:str='DenseNet121'):
@@ -56,3 +57,24 @@ class FisherInformationLoss(tf.keras.losses.Loss):
         else: 
             fisher = tf.reduce_mean(1.0/(y_pred+self.epsilon)) 
         return cross_entropy + self.lambda_reg*fisher
+
+
+def read_score(model, X:np.ndarray=None, Xa:np.ndarray=None):
+    p_clean = model.predict(X) 
+    p_adversary = model.predict(Xa) 
+    score = 0. 
+    if ((p_clean - p_adversary)**2).sum(axis=1).sum() > 0.001: 
+        score = (((p_clean*np.log2(p_clean/p_adversary)).sum(axis=1)).mean() \
+            + ((p_adversary*np.log2(p_adversary/p_clean)).sum(axis=1)).mean())/2.0 
+    return score
+
+def read_score_mrn(model, dataset_benign, dataset_adversary): 
+    data_benign = (dataset_benign.X1, dataset_benign.X2, dataset_benign.X3)
+    p_clean = model.predict(data_benign)
+    data_adversary= (dataset_adversary.X1, dataset_adversary.X2, dataset_adversary.X3)
+    p_adversary  = model.predict(data_adversary)
+    score = 0. 
+    if ((p_clean - p_adversary)**2).sum(axis=1).sum() > 0.001: 
+        score = (((p_clean*np.log2(p_clean/p_adversary)).sum(axis=1)).mean() \
+            + ((p_adversary*np.log2(p_adversary/p_clean)).sum(axis=1)).mean())/2.0 
+    return score

@@ -26,6 +26,7 @@ from art.estimators.classification import TensorFlowV2Classifier
 from art.defences.trainer import AdversarialTrainer, AdversarialTrainerFBF
 from art.attacks.evasion import FastGradientMethod
 
+from .utils import read_score
 from .utils import get_backbone, FisherInformationLoss
 
 class SingleResolutionNet:  
@@ -97,6 +98,10 @@ class SingleResolutionNet:
     def evaluate(self, X, y): 
         yhat = np.argmax(self.network.predict(X), axis=1) 
         return (y==yhat).sum()/len(y)
+    
+    def evaluate_read(self, X, Xa):
+        return read_score(self.network, X, Xa)
+        
  
 
 class SingleResolutionAML: 
@@ -197,4 +202,7 @@ class SingleResolutionAML:
     def evaluate(self, X, y): 
         yhat = np.argmax(self.predict(X), axis=1)
         return (y==yhat).sum()/len(y)
+    
+    def evaluate_read(self, X, Xa):
+        return read_score(self.network, X, Xa)
  
