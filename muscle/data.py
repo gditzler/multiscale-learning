@@ -141,6 +141,14 @@ class FusionDataLoader():
     """_summary_
     """
     def __init__(self, image_size:int=[60,80,160], batch_size:int=128, rotation:int=40, augment:bool=False):
+        """_summary_
+
+        Args:
+            image_size (int, optional): _description_. Defaults to [60,80,160].
+            batch_size (int, optional): _description_. Defaults to 128.
+            rotation (int, optional): _description_. Defaults to 40.
+            augment (bool, optional): _description_. Defaults to False.
+        """
         self.train_ds = None 
         self.valid_ds = None 
         self.valid_ds_adv = None 

@@ -75,6 +75,6 @@ def main():
     }
     with open(output_path, 'wb') as f:
         pickle.dump(results, f) 
-        
+
 if __name__ == '__main__': 
     main()
