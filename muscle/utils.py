@@ -112,14 +112,20 @@ def load_train_evaluate(params:dict, image_size:int=160, adversarial_training:bo
     else:  
         performance['Benign'] = network.evaluate(dataloader.valid_ds, dataloader.valid_labels)
     
+    # save a copy of the benign data loader for later use.
+    dataloader_benign = dataloader
+     
     # evaluate the methods that have an epsilon parameter in the attack. 
     for index in indices:     
         perf = np.zeros((len(epsilons,)))
+        read = np.zeros((len(epsilons,)))
+        
         for n, eps in enumerate(epsilons):
             file_path = ''.join([params['data_path'], '/Adversarial_', index, '_eps', str(eps), '.pkl'])
             if type(image_size) is int:  
                 Xadv, yadv = prepare_adversarial_data(file_path=file_path, image_size=image_size)
                 perf[n] = network.evaluate(Xadv, yadv)
+                read[n] = network.evaluate_read(dataloader_benign.X_valid, Xadv)
             else: 
                 dataloader = FusionDataLoader(
                     image_size=image_size, 
@@ -129,13 +135,16 @@ def load_train_evaluate(params:dict, image_size:int=160, adversarial_training:bo
                 )
                 dataloader.load_adversarial(file_path=file_path)
                 perf[n] = network.evaluate(dataloader.valid_ds, dataloader.valid_labels)
+                read[n] = network.evaluate_read(dataloader_benign.valid_ds, dataloader.valid_ds)
         performance[index] = perf
+        performance[''.join([index, '_READ'])] = read  
     
     for index in attacks_without_epsilon:
         file_path = ''.join([params['data_path'], '/Adversarial_', index,'.pkl'])
         if type(image_size) is int:  
             Xadv, yadv = prepare_adversarial_data(file_path=file_path, image_size=image_size)
             performance[index] = network.evaluate(Xadv, yadv)
+            performance[''.join([index, '_READ'])] = network.evaluate_read(dataloader_benign.X_valid, Xadv)
         else: 
             dataloader = FusionDataLoader(
                 image_size=image_size, 
@@ -145,5 +154,6 @@ def load_train_evaluate(params:dict, image_size:int=160, adversarial_training:bo
             )
             dataloader.load_adversarial(file_path=file_path)
             performance[index] = network.evaluate(dataloader.valid_ds, dataloader.valid_labels)
+            performance[''.join([index, '_READ'])] = network.evaluate_read(dataloader_benign.valid_ds, dataloader.valid_ds)
     return performance
 
