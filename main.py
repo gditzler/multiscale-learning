@@ -32,6 +32,12 @@ parser.add_argument(
     type=str, 
     default='configs/config-densenet121.yaml'
 )
+parser.add_argument(
+    '--seed', 
+    type=int, 
+    default=1234
+)
+
 args = parser.parse_args()
  
 def main():
@@ -41,7 +47,7 @@ def main():
     
     output_path = ''.join([
         params['output_path'], 
-        str(params['seed']), '_', 
+        str(args.seed), '_', 
         params['backbone'],  '_', 
         params['loss'], 
         '.pkl'
@@ -75,6 +81,6 @@ def main():
     }
     with open(output_path, 'wb') as f:
         pickle.dump(results, f) 
-
+        
 if __name__ == '__main__': 
     main()
