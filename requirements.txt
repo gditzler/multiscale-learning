@@ -2,4 +2,5 @@ adversarial-robustness-toolbox
 numpy
 tensorflow
 tensorflow-datasets
-opencv-python 
+opencv-python
+Pillow 
