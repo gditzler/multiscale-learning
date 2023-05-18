@@ -38,38 +38,31 @@ if __name__ == '__main__':
              label=''.join(['FGSM: Dense-160 (', str(int(1000*data_dict['performance_160']['Benign'])/10), ')']))
     # plt.plot(epsilons, data_dict['performance_advt']['FastGradientSignMethod'], 'k', marker='*', 
     #          label=''.join(['FGSM: AT (', str(int(1000*data_dict['performance_advt']['Benign'])/10), ')']))
-    
     plt.plot(epsilons, data_dict['performance_full']['ProjectedGradientDescent'], 'r', marker='o', linestyle='dashed',
              label='PGD: MRN')
     plt.plot(epsilons, data_dict['performance_160']['ProjectedGradientDescent'], 'b', marker='p', linestyle='dashed',
              label='PGD: Dense-160')
     # plt.plot(epsilons, data_dict['performance_advt']['ProjectedGradientDescent'], 'k', marker='*', linestyle='dashed',
     #          label='PGD: AT')
-    
     #plt.plot(epsilons, data_dict['performance_fim']['FastGradientSignMethod'], 'm', marker='s', 
     #         label=''.join(['FIM (', str(int(1000*data_dict['performance_fim']['Benign'])/10), ')']))
     plt.legend() 
     plt.xlabel('epsilon')
-    plt.ylabel('Adversarial Performance')
+    plt.ylabel('Adversarial Accuracy')
     # plt.title('Fast Gradient Sign Method')
     plt.show()
     
       
-    # y_pgd = (data_dict['performance_full']['ProjectedGradientDescent']-data_dict['performance_160']['ProjectedGradientDescent'])/data_dict['performance_160']['ProjectedGradientDescent']
-    # y_fgsm = (data_dict['performance_full']['FastGradientSignMethod']-data_dict['performance_160']['FastGradientSignMethod'])/data_dict['performance_160']['FastGradientSignMethod']
-    # plt.figure() 
-    # plt.plot(epsilons, y_pgd*100, 'r', marker='o', label='PGD')
-    # plt.plot(epsilons, y_fgsm*100, 'b', marker='o', label='FGSM')
-    # plt.legend() 
-    # plt.xlabel('epsilon')
-    # plt.ylabel('Adversarial Performance Gain (%)')
-    # plt.show()
-    
     print('|---------------------------------------------|')
+    print('| Adversarial Performance (MRN vs Dense-160)  |')
     print(''.join(['MNR-DeepFool:         ', str(int(1000*data_dict['performance_full']['DeepFool'])/10)])) 
     print(''.join(['Dense160-DeepFool:    ', str(int(1000*data_dict['performance_160']['DeepFool'])/10)]))
     print(''.join(['Dense160-AT-DeepFool: ', str(int(1000*data_dict['performance_advt']['DeepFool'])/10)]))
-    print(''.join(['MNR-CW:               ', str(int(1000*data_dict['performance_full']['CarliniWagnerL0'])/10)])) 
-    print(''.join(['Dense160-CW:          ', str(int(1000*data_dict['performance_160']['CarliniWagnerL0'])/10)]))
-    print(''.join(['Dense160-AT-CW:       ', str(int(1000*data_dict['performance_advt']['CarliniWagnerL0'])/10)]))
     print('|---------------------------------------------|')
+    print('| Adversarial READ (MRN vs Dense-160)         |')
+    print(''.join(['MNR-DeepFool:         ', str(int(1000*data_dict['performance_full']['DeepFool_READ'])/10)])) 
+    print(''.join(['Dense160-DeepFool:    ', str(int(1000*data_dict['performance_160']['DeepFool_READ'])/10)]))
+    print(''.join(['Dense160-AT-DeepFool: ', str(int(1000*data_dict['performance_advt']['DeepFool_READ'])/10)]))
+    print('|---------------------------------------------|')
+    
+    
