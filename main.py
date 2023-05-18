@@ -54,7 +54,7 @@ def main():
     ])
     
     # set the random seed 
-    tf.random.set_seed(params['seed'])
+    tf.random.set_seed(args.seed)
     
     # run the adversarial training experiment 
     performance_advt = load_train_evaluate(params, 160, adversarial_training=True, epsilon=0.075)
