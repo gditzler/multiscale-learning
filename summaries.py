@@ -52,6 +52,21 @@ if __name__ == '__main__':
     # plt.title('Fast Gradient Sign Method')
     plt.show()
     
+    
+    plt.figure()
+    plt.plot(epsilons, data_dict['performance_full']['FastGradientSignMethod_READ'], 'r', marker='o', 
+             label=''.join(['FGSM: MRN (', str(int(1000*data_dict['performance_full']['Benign'])/10), ')']))
+    plt.plot(epsilons, data_dict['performance_160']['FastGradientSignMethod_READ'], 'b', marker='p', 
+             label=''.join(['FGSM: Dense-160 (', str(int(1000*data_dict['performance_160']['Benign'])/10), ')']))
+    plt.plot(epsilons, data_dict['performance_full']['ProjectedGradientDescent_READ'], 'r', marker='o', linestyle='dashed',
+             label='PGD: MRN')
+    plt.plot(epsilons, data_dict['performance_160']['ProjectedGradientDescent_READ'], 'b', marker='p', linestyle='dashed',
+             label='PGD: Dense-160')
+    plt.legend() 
+    plt.xlabel('epsilon')
+    plt.ylabel('READ Score')
+    plt.show()
+    
       
     print('|---------------------------------------------|')
     print('| Adversarial Performance (MRN vs Dense-160)  |')
