@@ -20,11 +20,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 batch_size: 128 
-rotation: 40 
+rotation: 40  
 augment: False 
 store_numpy: True 
 learning_rate: 0.0005 
-epochs: 20
+epochs: 15
 backbone: 'DenseNet121' 
 data_path: 'data/' 
 output_path: 'outputs/results_seed_' 

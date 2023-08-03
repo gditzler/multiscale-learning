@@ -33,7 +33,7 @@ indices = [
 ]
 attacks_without_epsilon = [
     'DeepFool', 
-    'CarliniWagnerL0'
+    # 'CarliniWagnerL0'
 ]
 
  
@@ -155,5 +155,8 @@ def load_train_evaluate(params:dict, image_size:int=160, adversarial_training:bo
             dataloader.load_adversarial(file_path=file_path)
             performance[index] = network.evaluate(dataloader.valid_ds, dataloader.valid_labels)
             performance[''.join([index, '_READ'])] = network.evaluate_read(dataloader_benign.valid_ds, dataloader.valid_ds)
+    del network
+    del dataloader
+    del dataloader_benign
     return performance
 
